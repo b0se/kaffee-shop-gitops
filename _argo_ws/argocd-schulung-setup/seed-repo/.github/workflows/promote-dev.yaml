@@ -1,0 +1,29 @@
+# Modul 10: simuliert den Bump-Schritt einer CI-Pipeline.
+# Vorher in GitHub: Settings -> Actions -> General -> Workflow permissions: "Read and write".
+name: promote-dev
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Neue Shop-Version (z.B. 1.2.0)"
+        required: true
+        default: "1.2.0"
+permissions:
+  contents: write
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # In einer echten Pipeline stuende hier: docker build / test / push mit ${{ inputs.version }} als Tag.
+      - name: Version im dev-Overlay setzen
+        run: |
+          sed -i "s/Version: <span class=\"v\">[0-9.]*</Version: <span class=\"v\">${{ inputs.version }}</" \
+            apps/shop/overlays/dev/kustomization.yaml
+          git diff --stat
+      - name: Commit und Push ins GitOps-Repo
+        run: |
+          git config user.name  "ci-bot"
+          git config user.email "ci@nordlicht.example"
+          git commit -am "deploy(dev): shop ${{ inputs.version }}" || echo "keine Aenderung"
+          git push

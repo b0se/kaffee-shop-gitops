@@ -1,0 +1,29 @@
+# Variante fuer Tag 2: Headlamp selbst per GitOps installieren.
+# Ins Schulungs-Repo unter argocd/apps/ legen -> die Root-Application uebernimmt.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: headlamp
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://kubernetes-sigs.github.io/headlamp/
+    chart: headlamp
+    targetRevision: 0.*                     # Trainer: aktuelle Chart-Version pruefen
+    helm:
+      releaseName: headlamp
+      valuesObject:
+        service:
+          type: NodePort
+          port: 80
+          nodePort: 30084
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: headlamp
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

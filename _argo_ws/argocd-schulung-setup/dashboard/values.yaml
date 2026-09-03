@@ -1,0 +1,18 @@
+# Headlamp - Helm-Values fuer die Schulungsumgebung (kind)
+# Service als NodePort 30084 -> ueber das kind-Portmapping http://localhost:8084
+# Voraussetzung: kind-Cluster wurde mit dem extraPortMapping 30084 -> 8084 angelegt.
+service:
+  type: NodePort
+  port: 80
+  nodePort: 30084
+
+# Der Pod-ServiceAccount von Headlamp bekommt per Chart-Default cluster-admin.
+# Das ist NICHT die Berechtigung der angemeldeten Benutzer - die kommt aus dem
+# Token, das beim Login eingegeben wird (siehe admin-user.yaml / viewer-user.yaml).
+clusterRoleBinding:
+  create: true
+  clusterRoleName: cluster-admin
+
+resources:
+  requests: { cpu: 50m, memory: 128Mi }
+  limits:   { cpu: 500m, memory: 512Mi }

@@ -1,0 +1,18 @@
+# Modul 14: ServiceMonitors + Alerts fuer Argo CD selbst (Manifest-Install bringt keine mit).
+# Als Application auf Pfad monitoring/ anlegen oder direkt: kubectl apply -f monitoring/
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: argocd-monitoring
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/<DEIN-ACCOUNT>/kaffee-shop-gitops.git
+    targetRevision: main
+    path: monitoring
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    automated: { prune: true, selfHeal: true }

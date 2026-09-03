@@ -1,0 +1,33 @@
+# Modul 14: kube-prometheus-stack per Argo CD. Liegt bewusst NICHT in argocd/apps/,
+# damit die Root-Application es nicht automatisch mitzieht (RAM!). Manuell anwenden.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: monitoring
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://prometheus-community.github.io/helm-charts
+    chart: kube-prometheus-stack
+    targetRevision: 65.*                      # Trainer: aktuelle Version pruefen
+    helm:
+      valuesObject:
+        grafana:
+          adminPassword: Schulung2026!         # nur Schulung!
+        prometheus:
+          prometheusSpec:
+            serviceMonitorSelectorNilUsesHelmValues: false
+            retention: 2d
+            resources:
+              requests: { memory: 400Mi }
+        alertmanager:
+          enabled: false
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: monitoring
+  syncPolicy:
+    automated: { prune: true, selfHeal: true }
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true

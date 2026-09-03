@@ -1,0 +1,2094 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Argo CD – Von Null zum GitOps-Profi · 2-Tages-Schulung · Coach-Raffael</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark-dimmed.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/powershell.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<style>
+:root{
+  --accent:#D4860A;--accent-soft:#F0A832;--accent-glow:rgba(212,134,10,.25);
+  --bg:#0B0D10;--surface:#14171C;--surface-2:#1C2128;--surface-3:#262C35;--border:#2A313B;--border-soft:rgba(255,255,255,.06);
+  --text:#ECEFF4;--text-muted:#9AA5B1;--text-dim:#6B7682;
+  --bloom-1:#3B82F6;--bloom-2:#8B5CF6;--bloom-3:#10B981;--bloom-4:#D4860A;--bloom-5:#EF4444;--bloom-6:#EC4899;
+  --info:#3B82F6;--tip:#10B981;--warn:#F59E0B;--danger:#EF4444;
+  --sidebar:284px;--radius:16px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:24px}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif;line-height:1.65;font-size:16px}
+a{color:var(--accent-soft);text-decoration:none}a:hover{text-decoration:underline}
+h1,h2,h3,h4{font-family:Syne,Inter,sans-serif;letter-spacing:-.02em;line-height:1.15;margin:0 0 .5em}
+h1{font-size:clamp(2.2rem,5vw,3.6rem);font-weight:800}
+h2{font-size:1.9rem;font-weight:800;margin-top:.2em}
+h3{font-size:1.25rem;font-weight:700;margin-top:2em;color:var(--text)}
+h4{font-size:1.02rem;font-weight:700;margin-top:1.6em}
+p{margin:0 0 1em}
+code{font-family:"JetBrains Mono",monospace;font-size:.88em;background:var(--surface-2);padding:.12em .4em;border-radius:6px;border:1px solid var(--border-soft)}
+pre code{background:none;padding:0;border:0;font-size:.84rem;line-height:1.55}
+kbd{font-family:"JetBrains Mono",monospace;font-size:.8em;border:1px solid var(--border);border-bottom-width:2px;border-radius:5px;padding:.05em .4em;background:var(--surface-3)}
+strong{font-weight:600;color:#fff}
+
+/* progress */
+#progress{position:fixed;top:0;left:0;height:3px;width:100%;transform-origin:0 50%;transform:scaleX(0);background:linear-gradient(90deg,var(--accent),var(--accent-soft));z-index:100}
+
+/* sidebar */
+#sidebar{position:fixed;top:0;left:0;bottom:0;width:var(--sidebar);background:var(--surface);border-right:1px solid var(--border);overflow-y:auto;padding:26px 18px 40px;z-index:50;transition:transform .3s ease}
+#sidebar .brand{display:flex;align-items:center;gap:10px;margin-bottom:22px;padding:0 6px}
+#sidebar .brand .logo{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent-soft));display:grid;place-items:center;font-family:Syne;font-weight:800;color:#1a1204;font-size:15px}
+#sidebar .brand div{font-family:Syne;font-weight:700;font-size:.95rem;line-height:1.2}
+#sidebar .brand small{display:block;font-family:Inter;font-weight:400;color:var(--text-dim);font-size:.72rem}
+#sidebar .day{font-family:Syne;font-weight:700;font-size:.78rem;color:var(--accent);margin:18px 8px 6px;display:flex;align-items:center;gap:8px}
+#sidebar .day::after{content:"";flex:1;height:1px;background:var(--border)}
+#sidebar nav{position:relative}
+#sidebar nav a{display:flex;gap:9px;align-items:baseline;padding:7px 10px;border-radius:9px;color:var(--text-muted);font-size:.86rem;line-height:1.3;position:relative}
+#sidebar nav a .n{font-family:"JetBrains Mono";font-size:.72rem;color:var(--text-dim);min-width:22px}
+#sidebar nav a:hover{background:var(--surface-2);color:var(--text);text-decoration:none}
+#sidebar nav a.active{color:#fff;background:var(--surface-2)}
+#sidebar nav a.active .n{color:var(--accent)}
+#spy{position:absolute;left:0;width:3px;border-radius:3px;background:var(--accent);transition:top .35s cubic-bezier(.4,0,.2,1),height .35s}
+#menu-btn{display:none;position:fixed;top:14px;left:14px;z-index:60;background:var(--surface-2);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:8px 12px;font-family:Inter;font-weight:600}
+
+/* main */
+main{margin-left:var(--sidebar);padding:0 40px 80px}
+.wrap{max-width:820px;margin:0 auto}
+.wide{max-width:1040px;margin:0 auto}
+section.module{padding:70px 0 30px;border-bottom:1px solid var(--border-soft)}
+section.module:last-of-type{border:0}
+
+/* hero */
+.hero{padding:80px 0 50px;position:relative;overflow:hidden}
+.hero::before{content:"";position:absolute;inset:-40% -20% auto -20%;height:130%;background:radial-gradient(60% 50% at 30% 30%,rgba(212,134,10,.16),transparent 60%),radial-gradient(40% 40% at 80% 10%,rgba(59,130,246,.10),transparent 60%);pointer-events:none;animation:drift 18s ease-in-out infinite alternate}
+@keyframes drift{to{transform:translate(4%,3%)}}
+.hero>*{position:relative}
+.badge{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:999px;background:rgba(212,134,10,.12);border:1px solid rgba(212,134,10,.35);color:var(--accent-soft);font-size:.78rem;font-weight:600}
+.hero .sub{font-size:1.2rem;color:var(--text-muted);max-width:640px}
+.meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+.meta span{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:8px 13px;font-size:.82rem;color:var(--text-muted)}
+.meta span b{color:var(--text);font-weight:600}
+
+/* module header */
+.mhead{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:8px}
+.mnum{font-family:"JetBrains Mono";color:var(--accent);font-size:.85rem;font-weight:500}
+.mtime{font-size:.78rem;color:var(--text-dim);margin-left:auto}
+.bloom{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 18px}
+.bloom i{font-style:normal;font-size:.7rem;font-weight:600;padding:3px 9px;border-radius:999px;color:#fff;opacity:.9}
+.b1{background:var(--bloom-1)}.b2{background:var(--bloom-2)}.b3{background:var(--bloom-3)}.b4{background:var(--bloom-4);color:#1a1204!important}.b5{background:var(--bloom-5)}.b6{background:var(--bloom-6)}
+.lead{font-size:1.08rem;color:var(--text-muted)}
+.story{border-left:3px solid var(--accent);padding:10px 18px;margin:18px 0 26px;background:linear-gradient(90deg,rgba(212,134,10,.08),transparent);border-radius:0 12px 12px 0;font-style:italic;color:var(--text-muted)}
+.story b{font-style:normal;color:var(--accent-soft)}
+
+/* cards */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px 24px;margin:18px 0;transition:transform .25s,box-shadow .25s,border-color .25s}
+.card:hover{transform:translateY(-3px);box-shadow:0 14px 34px rgba(0,0,0,.35),0 0 0 1px var(--accent-glow);border-color:rgba(212,134,10,.4)}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+
+/* term (Begriff) */
+.term{display:grid;grid-template-columns:150px 1fr;gap:6px 18px;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px 20px;margin:14px 0}
+.term .t{font-family:"JetBrains Mono";color:var(--accent-soft);font-weight:500;font-size:.9rem}
+.term .d{color:var(--text)}
+.term .r{grid-column:2;color:var(--text-muted);font-size:.9rem;padding-top:4px;border-top:1px dashed var(--border)}
+.term .r::before{content:"Relevanz hier: ";color:var(--accent);font-weight:600}
+@media(max-width:640px){.term{grid-template-columns:1fr}.term .r{grid-column:1}}
+
+/* click path */
+.path{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:10px 0 14px;font-size:.86rem}
+.path span{background:var(--surface-2);border:1px solid var(--border);padding:4px 10px;border-radius:8px;color:var(--text)}
+.path span.ui{border-color:rgba(212,134,10,.45);color:var(--accent-soft)}
+.path em{color:var(--text-dim);font-style:normal}
+
+/* callouts */
+.co{border-radius:14px;padding:16px 18px 16px 52px;margin:18px 0;position:relative;border:1px solid;background:var(--surface)}
+.co::before{position:absolute;left:16px;top:15px;font-size:1.2rem}
+.co b:first-child{display:block;margin-bottom:4px;font-family:Syne;font-size:.92rem}
+.co.info{border-color:rgba(59,130,246,.4)}.co.info::before{content:"ⓘ";color:var(--info)}
+.co.tip{border-color:rgba(16,185,129,.4)}.co.tip::before{content:"✦";color:var(--tip)}
+.co.warn{border-color:rgba(245,158,11,.45)}.co.warn::before{content:"⚠";color:var(--warn)}
+.co.danger{border-color:rgba(239,68,68,.5);background:linear-gradient(90deg,rgba(239,68,68,.08),var(--surface))}.co.danger::before{content:"⛔";color:var(--danger)}
+.co.danger b:first-child{color:#FCA5A5}
+
+/* code */
+.codebox{position:relative;margin:16px 0;border:1px solid var(--border);border-radius:14px;overflow:hidden;background:var(--surface-2)}
+.codebox .lbl{display:flex;justify-content:space-between;align-items:center;padding:6px 14px;font-family:"JetBrains Mono";font-size:.72rem;color:var(--text-dim);background:var(--surface);border-bottom:1px solid var(--border)}
+.codebox .lbl button{background:transparent;border:1px solid var(--border);color:var(--text-muted);border-radius:6px;font-size:.7rem;padding:2px 9px;cursor:pointer;font-family:Inter}
+.codebox .lbl button:hover{color:var(--text);border-color:var(--accent)}
+.codebox pre{margin:0;padding:14px 16px;overflow-x:auto}
+.tabs{display:flex;gap:2px;background:var(--surface);border-bottom:1px solid var(--border);padding:4px 8px 0}
+.tabs button{background:transparent;border:0;color:var(--text-dim);padding:7px 12px;border-radius:8px 8px 0 0;cursor:pointer;font-family:"JetBrains Mono";font-size:.75rem}
+.tabs button.on{background:var(--surface-2);color:var(--accent-soft)}
+.tabpane{display:none}.tabpane.on{display:block}
+
+/* tables */
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:.9rem}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+th{font-family:Syne;font-size:.8rem;color:var(--accent-soft);font-weight:700;border-bottom:2px solid var(--border)}
+tr:hover td{background:rgba(255,255,255,.02)}
+td code{white-space:nowrap}
+
+/* exercises */
+.ex{border:1px solid rgba(16,185,129,.35);border-radius:var(--radius);background:linear-gradient(180deg,rgba(16,185,129,.06),var(--surface));padding:20px 24px;margin:26px 0}
+.ex .exh{display:flex;align-items:center;gap:10px;margin-bottom:8px;font-family:Syne;font-weight:700}
+.ex .exh::before{content:"Übung";font-size:.7rem;background:var(--bloom-3);color:#fff;padding:3px 9px;border-radius:999px}
+.ex ol{padding-left:20px}
+details{margin-top:12px;border:1px solid var(--border);border-radius:10px;background:var(--surface-2)}
+summary{cursor:pointer;padding:10px 14px;font-weight:600;color:var(--accent-soft);list-style:none}
+summary::before{content:"▸ ";color:var(--text-dim)}
+details[open] summary::before{content:"▾ "}
+details>div{padding:4px 16px 14px}
+
+/* mermaid */
+.diagram{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin:18px 0;overflow-x:auto}
+.diagram .cap{font-size:.8rem;color:var(--text-dim);margin-top:8px;text-align:center}
+.mermaid{display:flex;justify-content:center}
+
+/* sim generic */
+.sim{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin:20px 0}
+.sim h4{margin:0 0 14px;display:flex;align-items:center;gap:10px}
+.sim h4::before{content:"interaktiv";font-size:.65rem;font-weight:600;background:rgba(212,134,10,.15);color:var(--accent-soft);border:1px solid rgba(212,134,10,.4);padding:2px 8px;border-radius:999px;font-family:Inter}
+.btn{background:var(--surface-3);border:1px solid var(--border);color:var(--text);padding:8px 14px;border-radius:9px;cursor:pointer;font-family:Inter;font-weight:500;font-size:.85rem;transition:all .2s}
+.btn:hover{border-color:var(--accent);color:var(--accent-soft);transform:translateY(-1px)}
+.btn.primary{background:var(--accent);color:#1a1204;border-color:var(--accent)}
+.btn.primary:hover{background:var(--accent-soft);color:#1a1204}
+.btn.danger{border-color:rgba(239,68,68,.5);color:#FCA5A5}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.toggle{display:inline-flex;align-items:center;gap:8px;font-size:.85rem;cursor:pointer;user-select:none;padding:6px 10px;border-radius:9px;border:1px solid var(--border);background:var(--surface-2)}
+.toggle input{accent-color:var(--accent)}
+.pill{display:inline-block;padding:3px 10px;border-radius:999px;font-size:.75rem;font-weight:600;border:1px solid}
+.pill.ok{color:#6EE7B7;border-color:rgba(16,185,129,.5);background:rgba(16,185,129,.1)}
+.pill.bad{color:#FCD34D;border-color:rgba(245,158,11,.5);background:rgba(245,158,11,.1)}
+.pill.err{color:#FCA5A5;border-color:rgba(239,68,68,.5);background:rgba(239,68,68,.1)}
+.pill.run{color:#93C5FD;border-color:rgba(59,130,246,.5);background:rgba(59,130,246,.1)}
+.pill.na{color:var(--text-dim);border-color:var(--border)}
+
+/* reconcile sim */
+#rec .panes{display:grid;grid-template-columns:1fr auto 1fr;gap:14px;align-items:stretch;margin:14px 0}
+#rec .pane{background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:14px}
+#rec .pane h5{margin:0 0 10px;font-family:Syne;font-size:.85rem;color:var(--text-muted)}
+#rec .kv{font-family:"JetBrains Mono";font-size:.8rem;line-height:1.9}
+#rec .kv .diff{color:#FCD34D}
+#rec .arrow{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-width:110px;color:var(--text-dim);font-size:.72rem;text-align:center}
+#rec .arrow .line{width:80px;height:2px;background:var(--border);position:relative;overflow:hidden;border-radius:2px}
+#rec .arrow .line i{position:absolute;top:-2px;left:-20px;width:18px;height:6px;border-radius:3px;background:var(--accent);opacity:0}
+#rec .arrow.flow .line i{animation:tok 1.1s linear infinite;opacity:1}
+@keyframes tok{to{left:100%}}
+#rec .log{font-family:"JetBrains Mono";font-size:.76rem;background:#0b0d10;border:1px solid var(--border);border-radius:10px;padding:10px 14px;height:130px;overflow-y:auto;color:var(--text-muted);margin-top:12px}
+#rec .log div{padding:1px 0}
+#rec .log .a{color:var(--accent-soft)}#rec .log .g{color:#6EE7B7}#rec .log .w{color:#FCD34D}#rec .log .e{color:#FCA5A5}
+#rec .ctr{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.pods{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
+.pod{width:22px;height:22px;border-radius:6px;background:var(--bloom-3);transition:all .3s;animation:pop .3s ease}
+.pod.dead{background:var(--danger)}.pod.old{background:#8B5CF6}
+@keyframes pop{from{transform:scale(.4);opacity:0}}
+
+/* wave stepper */
+.sim .lane{display:grid;grid-template-columns:120px 1fr;gap:10px;align-items:center;padding:8px 0;border-bottom:1px dashed var(--border-soft)}
+.sim .lane .nm{font-family:"JetBrains Mono";font-size:.78rem;color:var(--text-muted)}
+.sim .bar{height:26px;border-radius:7px;background:var(--surface-3);position:relative;overflow:hidden}
+.sim .bar i{position:absolute;inset:0;width:0;background:linear-gradient(90deg,var(--accent),var(--accent-soft));transition:width .6s ease}
+.sim .bar span{position:absolute;left:10px;top:3px;font-size:.72rem;color:var(--text);z-index:1}
+.sim .lane.done .bar i{width:100%;background:var(--bloom-3)}
+.sim .lane.active .bar i{width:60%}
+.sim .lane.fail .bar i{width:100%;background:var(--danger)}
+.sim .lane.skip{opacity:.35}
+
+/* appset playground */
+#aset{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+#aset textarea{width:100%;min-height:150px;background:#0b0d10;color:var(--text);border:1px solid var(--border);border-radius:10px;padding:12px;font-family:"JetBrains Mono";font-size:.8rem;resize:vertical}
+#aset .out{display:flex;flex-direction:column;gap:8px}
+#aset .appc{background:var(--surface-2);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:10px;padding:10px 14px;font-family:"JetBrains Mono";font-size:.76rem;line-height:1.7;animation:pop .3s}
+#aset .appc b{color:var(--accent-soft);font-weight:500}
+@media(max-width:760px){#aset{grid-template-columns:1fr}}
+
+/* status matrix */
+.matrix{display:grid;grid-template-columns:120px repeat(3,1fr);gap:6px;font-size:.82rem}
+.matrix>div{padding:12px;border-radius:10px;background:var(--surface-2);border:1px solid var(--border)}
+.matrix .h{background:transparent;border:0;font-family:Syne;font-weight:700;color:var(--accent-soft);font-size:.78rem}
+.matrix .g{border-color:rgba(16,185,129,.4)}.matrix .y{border-color:rgba(245,158,11,.4)}.matrix .r{border-color:rgba(239,68,68,.45)}
+.matrix b{display:block;margin-bottom:4px}
+
+/* coverage matrix */
+.cov{display:grid;grid-template-columns:auto repeat(6,1fr);gap:4px;font-size:.75rem}
+.cov>div{padding:7px 8px;border-radius:7px;background:var(--surface-2);text-align:center;color:var(--text-dim)}
+.cov .h{background:transparent;font-family:Syne;font-weight:700;color:var(--text-muted)}
+.cov .m{text-align:left;color:var(--text);white-space:nowrap}
+.cov .on{color:#fff;font-weight:600}
+.comp{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.comp .card{border-top:4px solid}
+.comp .card h4{margin-top:0;font-size:.95rem}
+.comp ul{padding-left:18px;margin:0;font-size:.88rem;color:var(--text-muted)}
+
+/* misc */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .55s ease,transform .55s ease}
+.reveal.in{opacity:1;transform:none}
+.agenda{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.agenda .card{margin:0}
+.agenda ol{padding-left:20px;margin:6px 0 0;font-size:.9rem;color:var(--text-muted)}
+.agenda ol li{margin:3px 0}
+.agenda ol li b{color:var(--text);font-weight:500}
+.tl{list-style:none;padding:0;margin:14px 0}
+.tl li{position:relative;padding:0 0 16px 28px;border-left:2px solid var(--border);margin-left:8px}
+.tl li::before{content:"";position:absolute;left:-7px;top:6px;width:12px;height:12px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px var(--accent-glow)}
+.tl li b{display:block;font-family:Syne;font-size:.95rem}
+footer{margin-left:var(--sidebar);padding:30px 40px;border-top:1px solid var(--border);color:var(--text-dim);font-size:.8rem;text-align:center}
+@media(max-width:900px){
+  #sidebar{transform:translateX(-100%)}#sidebar.open{transform:none;box-shadow:0 0 60px rgba(0,0,0,.6)}
+  #menu-btn{display:block}main,footer{margin-left:0;padding:0 18px 60px}.hero{padding-top:70px}.agenda{grid-template-columns:1fr}
+  #rec .panes{grid-template-columns:1fr}#rec .arrow{flex-direction:row}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+<button id="menu-btn" aria-label="Navigation">☰ Module</button>
+
+<aside id="sidebar">
+  <div class="brand"><div class="logo">CR</div><div>Coach-Raffael<small>Argo CD · GitOps auf Kubernetes</small></div></div>
+  <nav>
+    <div id="spy"></div>
+    <a href="#m0"><span class="n">00</span>Orientierung &amp; roter Faden</a>
+    <div class="day">Tag 1 · Fundament</div>
+    <a href="#m1"><span class="n">01</span>Warum GitOps? Das Problem</a>
+    <a href="#m2"><span class="n">02</span>Argo CD Architektur</a>
+    <a href="#m3"><span class="n">03</span>Installation &amp; UI-Rundgang</a>
+    <a href="#m4"><span class="n">04</span>Die erste Application</a>
+    <a href="#m5"><span class="n">05</span>Sync, Drift &amp; Self-Heal</a>
+    <a href="#m6"><span class="n">06</span>Repos, Credentials, Cluster</a>
+    <div class="day">Tag 2 · Skalierung &amp; Betrieb</div>
+    <a href="#m7"><span class="n">07</span>Kustomize &amp; Helm</a>
+    <a href="#m8"><span class="n">08</span>Projects &amp; RBAC</a>
+    <a href="#m9"><span class="n">09</span>App of Apps &amp; ApplicationSets</a>
+    <a href="#m10"><span class="n">10</span>CI/CD-Integration</a>
+    <a href="#m11"><span class="n">11</span>Sync-Waves, Hooks, Health</a>
+    <a href="#m12"><span class="n">12</span>Secrets &amp; Sicherheit</a>
+    <a href="#m13"><span class="n">13</span>Scripting &amp; API</a>
+    <a href="#m14"><span class="n">14</span>Betrieb: Rollback, Monitoring, Troubleshooting</a>
+    <a href="#m15"><span class="n">15</span>Abschluss &amp; Capstone</a>
+  </nav>
+</aside>
+
+<main>
+<div class="hero"><div class="wrap">
+  <span class="badge">☕ Nordlicht Kaffee · Praxisfall</span>
+  <h1 style="margin-top:18px">Argo CD: Von der ersten Zeile YAML zum GitOps-Profi</h1>
+  <p class="sub">Zwei Tage, ein durchgehendes Projekt. Sie bringen den Web-Shop einer Rösterei von „kubectl apply von Hand“ bis zu einem produktionsreifen, mehrstufigen GitOps-Setup – und verstehen dabei jeden Begriff im Moment, in dem Sie ihn brauchen.</p>
+  <div class="meta">
+    <span><b>Dauer</b> 2 Tage · 15 Module</span>
+    <span><b>Zielgruppe</b> Entwickler, DevOps, Platform-Engineers ohne Argo CD-Vorwissen</span>
+    <span><b>Umgebung</b> Windows · Docker Desktop · kind · GitHub</span>
+    <span><b>Version</b> Argo CD 3.x (stable)</span>
+    <span><b>Bloom</b> L1 – L6</span>
+  </div>
+</div></div>
+<!-- ===================== M0 ===================== -->
+<section class="module" id="m0"><div class="wrap reveal">
+  <div class="mhead"><span class="mnum">Modul 00</span><h2>Orientierung &amp; roter Faden</h2><span class="mtime">30 min</span></div>
+  <div class="bloom"><i class="b1">L1 Erinnern</i><i class="b2">L2 Verstehen</i></div>
+  <p class="lead">Bevor wir ein einziges Tool anfassen: Worum geht es zwei Tage lang, und woran erkennen Sie am Ende, dass Sie es können?</p>
+
+  <div class="story"><b>Die Ausgangslage.</b> Die Rösterei <b>Nordlicht Kaffee</b> aus Hamburg-Altona betreibt einen kleinen Web-Shop auf Kubernetes. Deployments macht Mareike aus dem Dev-Team per <code>kubectl apply</code> vom Laptop. Letzte Woche stand der Shop drei Stunden still: Jemand hatte „nur kurz“ das Replica-Set auf 1 gesetzt, um einen Fehler zu debuggen – und es vergessen. Niemand wusste, welcher Stand eigentlich der richtige war. Die Geschäftsführung will, dass das nie wieder passiert. Sie sind das Team, das das löst.</div>
+
+  <h3>So ist die Schulung aufgebaut</h3>
+  <div class="agenda">
+    <div class="card"><h4 style="margin-top:0;color:var(--accent-soft)">Tag 1 · Das Fundament</h4>
+      <ol>
+        <li><b>Warum GitOps?</b> – das Problem verstehen, bevor man die Lösung lernt</li>
+        <li><b>Architektur</b> – welche Komponenten tun was, und warum das für Sie wichtig ist</li>
+        <li><b>Installation &amp; UI</b> – jeder Klickpfad, jede Einstellung</li>
+        <li><b>Erste Application</b> – der Shop läuft aus Git</li>
+        <li><b>Sync, Drift, Self-Heal</b> – Mareikes Vorfall kann nicht mehr passieren</li>
+        <li><b>Repos, Credentials, Cluster</b> – private Repos und mehrere Cluster anbinden</li>
+      </ol></div>
+    <div class="card"><h4 style="margin-top:0;color:var(--accent-soft)">Tag 2 · Skalierung &amp; Betrieb</h4>
+      <ol start="7">
+        <li><b>Kustomize &amp; Helm</b> – dev und prod aus einer Basis</li>
+        <li><b>Projects &amp; RBAC</b> – wer darf was, und was darf wo hin</li>
+        <li><b>App of Apps &amp; ApplicationSets</b> – 2 Apps sind einfach, 200 auch</li>
+        <li><b>CI/CD-Integration</b> – GitHub Actions, GitLab CI, Jenkins schreiben nach Git</li>
+        <li><b>Sync-Waves, Hooks, Health</b> – Reihenfolge, Migrationen, Smoketests</li>
+        <li><b>Secrets &amp; Sicherheit</b> – Passwörter in Git, ohne Passwörter in Git</li>
+        <li><b>Scripting &amp; API</b> – CLI, REST, PowerShell-Automatisierung</li>
+        <li><b>Betrieb</b> – Rollback, Notifications, Prometheus/Grafana, Performance</li>
+        <li><b>Capstone</b> – Sie bauen das Setup allein nach</li>
+      </ol></div>
+  </div>
+
+  <h3>Was Sie heute Morgen bereits haben (Setup-Check)</h3>
+  <p>Ihr Trainer hat auf Ihrem Windows-Rechner vorbereitet: Docker Desktop, einen Kubernetes-Cluster (<code>kind</code>), Argo CD unter <a href="http://localhost:8080" target="_blank">http://localhost:8080</a> und die CLI-Tools. Prüfen Sie kurz mit:</p>
+  <div class="codebox"><div class="lbl">PowerShell<button class="cp">Kopieren</button></div><pre><code class="language-powershell">kubectl get nodes                      # 1 Node "schulung-control-plane", Status Ready
+kubectl -n argocd get pods             # 7 Pods, alle Running
+argocd version --client                # Argo CD CLI vorhanden
+gh auth status                         # bei GitHub angemeldet</code></pre></div>
+
+  <div class="co info"><b>Wie Begriffe in dieser Schulung erklärt werden</b>Jeder Fachbegriff erscheint in einer Begriffs-Box mit drei Teilen: dem Begriff, seiner Definition und – wichtiger – seiner <em>Relevanz</em> für das, was wir in genau diesem Moment tun. Sie lernen keinen Wortschatz auf Vorrat, sondern das Wort in dem Moment, in dem Sie es brauchen.</div>
+
+  <div class="term"><span class="t">GitOps</span><span class="d">Betriebsmodell, bei dem der <em>gewünschte</em> Zustand von Infrastruktur und Anwendungen vollständig deklarativ in Git liegt und ein Automat den <em>tatsächlichen</em> Zustand kontinuierlich daran angleicht.</span><span class="r">Das ganze Training ist die Antwort auf Mareikes Vorfall: Der richtige Stand ist immer der in Git – und niemand muss ihn sich merken.</span></div>
+  <div class="term"><span class="t">Argo CD</span><span class="d">Open-Source-Werkzeug (CNCF Graduated) der Argo-Familie, das GitOps für Kubernetes umsetzt: Es liest Manifeste aus Git, vergleicht sie mit dem Cluster und stellt Abweichungen dar oder korrigiert sie.</span><span class="r">Das Werkzeug, mit dem wir Nordlicht Kaffees Deployments automatisieren. Argo CD ist <em>nicht</em> Argo Workflows (Pipelines) und nicht Argo Rollouts (Canary/Blue-Green) – beide streifen wir nur am Rand.</span></div>
+</div></section>
+
+<!-- ===================== M1 ===================== -->
+<section class="module" id="m1"><div class="wrap reveal">
+  <div class="mhead"><span class="mnum">Modul 01</span><h2>Warum GitOps? Das Problem, das Argo CD löst</h2><span class="mtime">60 min</span></div>
+  <div class="bloom"><i class="b1">L1</i><i class="b2">L2</i><i class="b3">L3</i><i class="b4">L4</i></div>
+  <p class="lead">Wir reproduzieren Mareikes Vorfall live. Erst wenn Sie das Problem gefühlt haben, ergibt jede Argo CD-Einstellung später sofort Sinn.</p>
+
+  <h3>Hands-on: Der Shop „von Hand“</h3>
+  <p>Klonen Sie Ihr Repository (aus dem Template erstellt) und deployen Sie den Shop klassisch:</p>
+  <div class="codebox"><div class="lbl">PowerShell<button class="cp">Kopieren</button></div><pre><code class="language-powershell">gh repo clone &lt;ihr-account&gt;/kaffee-shop-gitops
+cd kaffee-shop-gitops
+kubectl create namespace shop-manual
+kubectl apply -k apps/shop/base -n shop-manual
+kubectl -n shop-manual get pods,svc
+# Shop im Browser: http://localhost:8081</code></pre></div>
+  <p>Funktioniert. Jetzt der Vorfall:</p>
+  <div class="codebox"><div class="lbl">PowerShell<button class="cp">Kopieren</button></div><pre><code class="language-powershell"># "Nur kurz zum Debuggen":
+kubectl -n shop-manual scale deployment kaffee-shop --replicas=0
+# ... Feierabend. Niemand merkt es. Shop ist weg.
+kubectl -n shop-manual get deploy</code></pre></div>
+  <p>Fragen an Sie: Wer weiß, dass das passiert ist? Welcher Stand ist der richtige? Wo steht er? Woher soll ein Kollege um 3 Uhr nachts wissen, was zu tun ist?</p>
+
+  <h3>Push vs. Pull – zwei Denkmodelle</h3>
+  <div class="diagram"><pre class="mermaid">
+flowchart LR
+  subgraph PUSH["Push-Modell (klassische CI/CD-Pipeline)"]
+    direction LR
+    D1[Entwickler] -->|git push| G1[(Git)]
+    G1 --> CI1[CI-Pipeline]
+    CI1 -->|kubectl apply<br/>mit Cluster-Credentials| K1[(Cluster)]
+    L1[Laptop] -.->|kubectl scale| K1
+  end
+  subgraph PULL["Pull-Modell (GitOps mit Argo CD)"]
+    direction LR
+    D2[Entwickler] -->|git push| G2[(Git)]
+    A2[Argo CD<br/>im Cluster] -->|liest| G2
+    A2 -->|gleicht an| K2[(Cluster)]
+    A2 -->|erkennt Drift| K2
+  end
+  style A2 fill:#D4860A,color:#1a1204,stroke:#F0A832
+  </pre><div class="cap">Links schiebt eine Pipeline Änderungen in den Cluster; rechts holt sich ein Agent im Cluster den Sollzustand und wacht darüber.</div></div>
+
+  <div class="term"><span class="t">Deklarativ</span><span class="d">Man beschreibt <em>was</em> sein soll („3 Replicas, Image 1.27“), nicht <em>wie</em> man dorthin kommt. Kubernetes-Manifeste sind deklarativ; ein Shell-Skript mit 20 kubectl-Befehlen ist es nicht.</span><span class="r">Nur deklarative Beschreibungen lassen sich automatisch mit der Realität vergleichen. Das ist die Vorbedingung für alles, was Argo CD tut.</span></div>
+  <div class="term"><span class="t">Single Source of Truth</span><span class="d">Genau eine verbindliche Quelle für den Sollzustand – bei GitOps: das Git-Repository.</span><span class="r">Die Antwort auf „welcher Stand ist der richtige?“ lautet ab jetzt immer: der Commit auf <code>main</code>.</span></div>
+  <div class="term"><span class="t">Drift</span><span class="d">Abweichung zwischen Sollzustand (Git) und Istzustand (Cluster) – egal ob durch manuelle Änderung, Crash oder Controller.</span><span class="r">Mareikes <code>scale --replicas=0</code> ist Drift. Argo CD macht Drift sichtbar (Modul 4) und kann ihn automatisch rückgängig machen (Modul 5, Self-Heal).</span></div>
+  <div class="term"><span class="t">Reconciliation</span><span class="d">Der Regelkreis: Sollzustand lesen → Istzustand beobachten → Differenz berechnen → Differenz beseitigen → von vorn. Kubernetes-Controller arbeiten genau so; Argo CD hebt das Prinzip auf die Ebene „Git ↔ Cluster“.</span><span class="r">Argo CDs Application Controller läuft diesen Kreis standardmäßig alle 3 Minuten (plus bei Webhook-Events) für jede Application.</span></div>
+
+  <h3>Argo CD im Vergleich</h3>
+  <table>
+    <tr><th></th><th>Argo CD</th><th>Flux</th><th>Jenkins X</th><th>Spinnaker</th></tr>
+    <tr><td>Modell</td><td>Pull (GitOps)</td><td>Pull (GitOps)</td><td>Push-CI + GitOps-Elemente</td><td>Push (Pipelines)</td></tr>
+    <tr><td>Oberfläche</td><td>Vollwertige UI mit Diff, Tree, Sync</td><td>Keine eigene UI (CLI; Weave GitOps/Headlamp-Plugin)</td><td>CLI, Dashboard rudimentär</td><td>Umfangreiche UI, Pipeline-orientiert</td></tr>
+    <tr><td>Helm</td><td><code>helm template</code> – keine Releases</td><td>Echte Helm-Releases (HelmRelease-CRD, <code>helm list</code> funktioniert)</td><td>Helm-basiert</td><td>Helm als Bake-Stage</td></tr>
+    <tr><td>Multi-Tenancy</td><td>Projekte, RBAC, SSO eingebaut</td><td>Über Kubernetes-RBAC und Namespaces</td><td>schwach</td><td>Accounts/Apps, komplex</td></tr>
+    <tr><td>Multi-Cluster</td><td>Hub-and-Spoke eingebaut, Cluster-Generator</td><td>Ein Flux pro Cluster (Standalone) üblich</td><td>ja</td><td>ja, Kernstärke</td></tr>
+    <tr><td>Erweiterungen</td><td>ApplicationSets, Rollouts, Image Updater, Notifications, Kargo</td><td>Image Automation, Notification Controller, Kustomize/Helm-Controller</td><td>Tekton, Preview-Envs</td><td>Canary-Analyse (Kayenta)</td></tr>
+    <tr><td>Reifegrad</td><td>CNCF Graduated</td><td>CNCF Graduated</td><td>CD Foundation, geringe Verbreitung</td><td>Netflix-Ursprung, schwere Installation, rückläufig</td></tr>
+    <tr><td>Passt, wenn …</td><td>Teams eine UI wollen, Mandanten trennen müssen, Kustomize-lastig sind</td><td>alles per kubectl/CLI läuft, echte Helm-Releases gebraucht werden, jeder Cluster autark sein soll</td><td>Kubernetes-native CI mit Previews gesucht wird</td><td>komplexe Multi-Cloud-Rollouts mit VM-Deployments dazukommen</td></tr>
+  </table>
+  <div class="co info"><b>Argo CD und Flux sind keine Konkurrenten im Sinn von „eins ist besser"</b>Beide setzen dasselbe Modell um. Der häufigste Entscheidungsgrund ist die UI (Argo CD) gegen echte Helm-Releases und Leichtgewicht (Flux). Jenkins X und Spinnaker sind CI/CD-Plattformen, die GitOps als Teil enthalten – wer nur Deployment auf Kubernetes braucht, kauft dort viel mit, was er nicht nutzt.</div>
+  <h3>Was GitOps konkret bringt</h3>
+  <div class="grid2">
+    <div class="card"><h4 style="margin-top:0">Audit &amp; Nachvollziehbarkeit</h4><p style="margin:0;font-size:.9rem;color:var(--text-muted)">Jede Änderung ist ein Commit mit Autor, Zeitpunkt, Review. „Wer hat prod geändert?“ beantwortet <code>git log</code>.</p></div>
+    <div class="card"><h4 style="margin-top:0">Rollback = git revert</h4><p style="margin:0;font-size:.9rem;color:var(--text-muted)">Kein Spezialwissen nötig. Der alte Zustand ist ein Commit weiter hinten.</p></div>
+    <div class="card"><h4 style="margin-top:0">Sicherheit</h4><p style="margin:0;font-size:.9rem;color:var(--text-muted)">Keine Cluster-Credentials in der CI, keine Laptops mit prod-Kubeconfig. Der Cluster holt sich, was er braucht.</p></div>
+    <div class="card"><h4 style="margin-top:0">Disaster Recovery</h4><p style="margin:0;font-size:.9rem;color:var(--text-muted)">Cluster weg? Neuen Cluster anlegen, Argo CD installieren, auf Git zeigen – fertig.</p></div>
+  </div>
+
+  <div class="co danger"><b>Anti-Pattern: „GitOps“ mit Pipeline, die kubectl apply macht</b>Viele Teams nennen es GitOps, wenn Git der Auslöser einer Pipeline ist, die dann <code>kubectl apply</code> ausführt. Das ist Push-CI/CD – ohne Drift-Erkennung, ohne Self-Heal, mit Cluster-Credentials im CI-System. Der Unterschied ist kein Detail: Nur das Pull-Modell bemerkt Mareikes nächtliches <code>scale</code>.</div>
+
+  <div class="ex"><div class="exh">Drift von Hand erkennen <span class="pill" style="border-color:var(--bloom-4);color:var(--accent-soft)">L4 Analysieren</span></div>
+    <ol>
+      <li>Vergleichen Sie den Istzustand mit Git: <code>kubectl -n shop-manual get deploy kaffee-shop -o yaml</code> gegen <code>apps/shop/base/deployment.yaml</code>.</li>
+      <li>Notieren Sie drei Felder, die im Cluster stehen, aber nicht in Git (Tipp: <code>status</code>, <code>metadata.managedFields</code>, Defaults).</li>
+      <li>Diskutieren Sie: Sind das alles „Drift“? Was müsste ein Tool ignorieren, was nicht?</li>
+    </ol>
+    <details><summary>Lösungshinweis</summary><div>Typische Nicht-Drift-Felder: <code>status</code>, <code>metadata.uid/resourceVersion/creationTimestamp</code>, <code>managedFields</code>, vom API-Server ergänzte Defaults wie <code>strategy.rollingUpdate.maxSurge</code>. Echter Drift: <code>spec.replicas: 0</code>. Argo CD normalisiert genau diese Unterschiede vor dem Diff (Modul 5 und 10: <code>ignoreDifferences</code>).</div></details>
+  </div>
+  <p>Räumen Sie den manuellen Namespace wieder weg – ab jetzt macht das Argo CD: <code>kubectl delete ns shop-manual</code></p>
+</div></section>
+
+<!-- ===================== M2 ===================== -->
+<section class="module" id="m2"><div class="wrap reveal">
+  <div class="mhead"><span class="mnum">Modul 02</span><h2>Argo CD Architektur – wer macht was?</h2><span class="mtime">45 min</span></div>
+  <div class="bloom"><i class="b1">L1</i><i class="b2">L2</i><i class="b4">L4</i></div>
+  <p class="lead">Sie haben vorhin <code>kubectl -n argocd get pods</code> ausgeführt und sieben Pods gesehen. Jeder davon beantwortet später eine konkrete Troubleshooting-Frage – deshalb lernen wir sie jetzt kennen.</p>
+
+  <div class="diagram"><pre class="mermaid">
+flowchart TB
+  U[Browser / CLI / CI] -->|gRPC / REST| API[argocd-server<br/>API + UI]
+  API --> REDIS[(redis<br/>Cache)]
+  API --> DEX[dex<br/>SSO / OIDC]
+  CTRL[argocd-application-controller<br/>Reconciliation-Loop] --> REDIS
+  CTRL -->|Manifeste anfordern| REPO[argocd-repo-server<br/>git clone · helm · kustomize]
+  REPO -->|git fetch| GIT[(Git-Repos)]
+  CTRL -->|watch + apply| K8S[(Kubernetes-Cluster<br/>lokal oder remote)]
+  ASET[applicationset-controller] -->|erzeugt Applications| CTRL
+  NOTIF[notifications-controller] -->|Slack, Mail, Webhook| EXT[Empfänger]
+  style CTRL fill:#D4860A,color:#1a1204,stroke:#F0A832
+  style REPO fill:#1C2128,stroke:#8B5CF6
+  </pre><div class="cap">Der Application Controller ist das Herz: Er vergleicht und synchronisiert. Der Repo Server rendert Manifeste. Der API-Server ist nur die Tür.</div></div>
+
+  <table>
+    <tr><th>Komponente</th><th>Aufgabe</th><th>Wann Sie sie brauchen (Troubleshooting)</th></tr>
+    <tr><td><code>argocd-server</code></td><td>Web-UI, REST/gRPC-API, Auth, RBAC-Durchsetzung. Stateless.</td><td>UI nicht erreichbar, Login-Probleme, „permission denied“ → Logs hier.</td></tr>
+    <tr><td><code>argocd-repo-server</code></td><td>Klont Repos, rendert Helm/Kustomize/Jsonnet/Plain YAML zu reinen Manifesten. Cache in Redis.</td><td>„ComparisonError“, Helm-Template-Fehler, „repo not found“ → Logs hier. Bei vielen Apps skalieren.</td></tr>
+    <tr><td><code>argocd-application-controller</code></td><td>StatefulSet. Läuft pro Application den Reconciliation-Loop: Diff berechnen, Sync ausführen, Health bewerten.</td><td>Sync hängt, Status „Unknown“, hohe CPU-Last → Logs hier. Sharding bei vielen Clustern.</td></tr>
+    <tr><td><code>argocd-redis</code></td><td>Cache für Manifeste und Cluster-State. Kein persistenter Zustand!</td><td>Kann jederzeit neu gestartet werden; aller Zustand lebt in CRDs.</td></tr>
+    <tr><td><code>argocd-dex-server</code></td><td>OIDC-Broker für SSO (GitHub, LDAP, SAML …).</td><td>Nur relevant, wenn Sie nicht mit lokalen Accounts arbeiten (Modul 8).</td></tr>
+    <tr><td><code>argocd-applicationset-controller</code></td><td>Erzeugt aus einem ApplicationSet viele Applications (Modul 9).</td><td>Apps werden nicht generiert → Logs hier.</td></tr>
+    <tr><td><code>argocd-notifications-controller</code></td><td>Versendet Ereignisse (Sync OK/Fehler) an Slack, Teams, Mail, Webhooks (Modul 14).</td><td>Keine Nachricht angekommen → Logs hier.</td></tr>
+  </table>
+
+  <div class="term"><span class="t">CRD</span><span class="d">Custom Resource Definition – erweitert die Kubernetes-API um eigene Objekttypen. Argo CD bringt <code>Application</code>, <code>AppProject</code> und <code>ApplicationSet</code> mit.</span><span class="r">Alles, was Sie in der UI klicken, ist am Ende ein YAML-Objekt im Namespace <code>argocd</code>. Deshalb können Sie Argo CD selbst per GitOps verwalten – und deshalb ist Redis egal.</span></div>
+  <div class="term"><span class="t">Application</span><span class="d">Argo CDs zentrale Ressource: verbindet <em>eine Quelle</em> (Repo + Pfad + Revision) mit <em>einem Ziel</em> (Cluster + Namespace) und beschreibt, wie synchronisiert wird.</span><span class="r">Modul 4 dreht sich komplett um dieses Objekt. „Shop dev“ und „Shop prod“ werden zwei Applications.</span></div>
+
+  <div class="co tip"><b>Merken für den Betrieb</b>Zustand liegt ausschließlich in Kubernetes-Objekten (CRDs, Secrets, ConfigMaps im Namespace <code>argocd</code>). Backup = <code>argocd admin export</code> oder einfach: alle Argo CD-Objekte selbst in Git (Modul 9, App of Apps).</div>
+
+  <div class="ex"><div class="exh">Komponenten live zuordnen <span class="pill" style="border-color:var(--bloom-2);color:#C4B5FD">L2 Verstehen</span></div>
+    <ol>
+      <li><code>kubectl -n argocd get deploy,statefulset,svc</code> – welche Komponente ist ein StatefulSet, und warum wohl?</li>
+      <li><code>kubectl -n argocd get crd | Select-String argoproj</code> – welche drei CRDs sehen Sie?</li>
+      <li><code>kubectl -n argocd logs deploy/argocd-repo-server --tail=20</code> – was tut der Repo-Server gerade?</li>
+    </ol>
+    <details><summary>Lösungshinweis</summary><div>Der Application Controller ist ein StatefulSet, weil er beim Sharding (mehrere Replicas für viele Cluster) eine stabile Identität (Ordinal 0, 1, …) braucht, um Cluster deterministisch auf Shards zu verteilen. CRDs: <code>applications</code>, <code>appprojects</code>, <code>applicationsets</code> (jeweils <code>.argoproj.io</code>).</div></details>
+  </div>
+</div></section>
+
+<!-- ===================== M3 ===================== -->
+<section class="module" id="m3"><div class="wrap reveal">
+  <div class="mhead"><span class="mnum">Modul 03</span><h2>Installation &amp; UI-Rundgang</h2><span class="mtime">60 min</span></div>
+  <div class="bloom"><i class="b1">L1</i><i class="b2">L2</i><i class="b3">L3</i><i class="b5">L5</i></div>
+  <p class="lead">Argo CD läuft schon – aber Sie sollen wissen, <em>wie</em> es dahin kam und was jede Ecke der Oberfläche bedeutet. Und wir schauen kritisch, was an der Schulungs-Installation nicht produktionstauglich ist.</p>
+
+  <h3>Die Installationsvarianten</h3>
+  <table>
+    <tr><th>Variante</th><th>Was</th><th>Wann</th></tr>
+    <tr><td><code>install.yaml</code> (unsere)</td><td>Alle Komponenten, 1 Replica, Cluster-weite RBAC (Argo CD darf in alle Namespaces deployen)</td><td>Dev, Schulung, kleine Teams</td></tr>
+    <tr><td><code>namespace-install.yaml</code></td><td>Wie oben, aber RBAC nur für den eigenen Namespace; weitere Cluster/Namespaces müssen explizit erlaubt werden</td><td>Mandantenfähige Cluster, wenn Argo CD nicht Cluster-Admin sein darf</td></tr>
+    <tr><td><code>ha/install.yaml</code></td><td>Redis-HA (Sentinel), mehrere Replicas für server/repo-server, Controller-Sharding vorbereitet</td><td>Produktion, ≥ 3 Nodes</td></tr>
+    <tr><td><code>core-install.yaml</code></td><td>Ohne API-Server, Dex, UI. Bedienung nur per <code>argocd --core</code> (kubectl-Kontext)</td><td>Wenn Zugang ohnehin nur über kubectl erfolgt; minimale Angriffsfläche</td></tr>
+    <tr><td>Helm-Chart <code>argo/argo-cd</code></td><td>Community-Chart, alle Werte konfigurierbar, Argo CD kann sich selbst verwalten</td><td>Der übliche Weg in echten Plattformen</td></tr>
+  </table>
+  <p>So wurde Ihre Umgebung aufgesetzt – nachvollziehen, nicht nochmal ausführen:</p>
+  <div class="codebox"><div class="lbl">PowerShell<button class="cp">Kopieren</button></div><pre><code class="language-powershell">kubectl create namespace argocd
+# --server-side ist Pflicht: das ApplicationSet-CRD sprengt sonst das
+# 256-KB-Limit der Annotation last-applied-configuration.
+kubectl apply -n argocd --server-side --force-conflicts -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+
+# Schulungs-Vereinfachung: HTTP statt TLS und NodePort statt Ingress.
+# Patch als Datei statt Inline-JSON - in PowerShell spart das Escaping-Aerger.
+@'
+data:
+  server.insecure: "true"
+'@ | Set-Content -Encoding ascii patch-cmd-params.yaml
+kubectl -n argocd patch configmap argocd-cmd-params-cm --type merge --patch-file patch-cmd-params.yaml
+kubectl -n argocd rollout restart deployment argocd-server
+
+@'
+spec:
+  type: NodePort
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8080
+      nodePort: 30080
+'@ | Set-Content -Encoding ascii patch-svc.yaml
+kubectl -n argocd patch svc argocd-server --type merge --patch-file patch-svc.yaml
+
+# Admin-Passwort auslesen
+$pw = kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}"
+[Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($pw))</code></pre></div>
+
+  <div class="co warn"><b>Windows-Stolperstein: PowerShell und Dateikodierung</b>Windows PowerShell 5.1 liest <code>.ps1</code>-Dateien ohne BOM als ANSI. Ein Umlaut oder ein Halbgeviertstrich wird dann zu <code>&auml;</code>-Salat und kann die Anf&uuml;hrungszeichen-Erkennung zerlegen (&bdquo;Die Zeichenfolge hat kein Abschlusszeichen&ldquo;). Halten Sie eigene Skripte ASCII-only oder speichern Sie sie in VS Code als <em>UTF-8 with BOM</em>. Derselbe Grund spricht f&uuml;r <code>--patch-file</code> statt Inline-JSON: kein Backslash-Escaping, das zwischen PowerShell 5.1 und 7 unterschiedlich ankommt.</div>
+<div class="term"><span class="t">argocd-cm / argocd-cmd-params-cm / argocd-rbac-cm</span><span class="d">Die drei zentralen ConfigMaps im Namespace <code>argocd</code>: allgemeine Konfiguration (Repos, SSO, Health-Checks, Diff-Regeln), Kommandozeilen-Parameter der Komponenten (Insecure, Timeouts, Reconcile-Intervall) und RBAC-Policies.</span><span class="r">Fast jede „Einstellung“, die es in der UI <em>nicht</em> gibt, lebt hier. Wir fassen alle drei im Verlauf der Schulung an.</span></div>
+
+  <h3>Login: UI und CLI</h3>
+  <div class="path"><span class="ui">http://localhost:8080</span><em>›</em><span>Username: admin</span><em>›</em><span>Password: aus Secret</span><em>›</em><span>SIGN IN</span></div>
+  <div class="codebox"><div class="lbl">PowerShell<button class="cp">Kopieren</button></div><pre><code class="language-powershell">argocd login localhost:8080 --username admin --password &lt;PW&gt; --plaintext
+argocd account update-password --new-password 'Schulung2026!'   # merken!
+argocd version                                                 # Client + Server
+argocd account get-user-info</code></pre></div>
+  <div class="co warn"><b>--plaintext vs. --insecure</b><code>--plaintext</code> = Verbindung ist reines HTTP (unsere Schulung). <code>--insecure</code> = HTTPS, aber Zertifikat nicht prüfen (selbstsignierte Zertifikate). Verwechseln führt zu kryptischen x509-/TLS-Handshake-Fehlern.</div>
+
+  <h3>Die Oberfläche – Klickpfad für Klickpfad</h3>
+  <div class="grid2">
+    <div class="card"><h4 style="margin-top:0">Applications (Startseite)</h4>
+      <p style="font-size:.9rem;color:var(--text-muted)">Kachel-, Listen- oder Zusammenfassungsansicht (Icons oben rechts). Filterleiste links: Sync Status, Health Status, Labels, Projects, Clusters, Namespaces, Auto-Sync. Oben: <b>+ NEW APP</b>, <b>SYNC APPS</b> (Mehrfach-Sync), <b>REFRESH APPS</b>.</p></div>
+    <div class="card"><h4 style="margin-top:0">Settings (Zahnrad)</h4>
+      <p style="font-size:.9rem;color:var(--text-muted)"><b>Repositories</b> (Git/Helm/OCI-Quellen + Credentials), <b>Repository certificates and known hosts</b> (TLS/SSH), <b>GnuPG keys</b> (Commit-Signaturprüfung), <b>Clusters</b> (Zielcluster), <b>Projects</b> (Mandanten/Grenzen), <b>Accounts</b> (lokale User), <b>Appearance</b> (Dark Mode).</p></div>
+    <div class="card"><h4 style="margin-top:0">User Info (Person)</h4>
+      <p style="font-size:.9rem;color:var(--text-muted)">Angemeldeter User, Gruppen (bei SSO), Passwort ändern, Logout.</p></div>
+    <div class="card"><h4 style="margin-top:0">Documentation (Buch)</h4>
+      <p style="font-size:.9rem;color:var(--text-muted)">Link zur Doku und zur Swagger-UI der REST-API (<code>/swagger-ui</code>) – nützlich für Automatisierung.</p></div>
+  </div>
+
+  <h3>Bewertung: Was ist an unserer Installation nicht produktionsreif?</h3>
+  <div class="co danger"><b>Anti-Pattern-Sammlung (bewusst in dieser Schulung)</b>
+    <ul style="margin:6px 0 0;padding-left:18px">
+      <li><code>server.insecure=true</code> + NodePort ohne TLS → Passwörter im Klartext im Netz. Produktion: Ingress mit TLS oder Argo CDs eigenes TLS.</li>
+      <li>Lokaler <code>admin</code>-Account aktiv → Produktion: SSO einrichten, <code>admin.enabled: "false"</code> in <code>argocd-cm</code> setzen.</li>
+      <li>Initial-Secret <code>argocd-initial-admin-secret</code> nie gelöscht → nach Passwortänderung löschen.</li>
+      <li>1 Replica pro Komponente, kein HA → Redis-Ausfall stoppt UI.</li>
+      <li>Argo CD ist Cluster-Admin ohne Projekt-Grenzen (bis Modul 8).</li>
+    </ul></div>
+
+  <div class="ex"><div class="exh">UI-Rallye <span class="pill" style="border-color:var(--bloom-3);color:#6EE7B7">L3 Anwenden</span></div>
+    <ol>
+      <li>Ändern Sie das Admin-Passwort über die UI (User Info → Update Password) und melden Sie sich per CLI neu an.</li>
+      <li>Finden Sie unter Settings → Clusters den vorregistrierten Cluster. Wie heißt seine URL, und warum ist sie so „komisch“?</li>
+      <li>Öffnen Sie <code>http://localhost:8080/swagger-ui</code> und suchen Sie den Endpunkt zum Auflisten von Applications.</li>
+      <li><em>Bewerten Sie (L5):</em> Welche der oben genannten Anti-Patterns wären in Ihrer Firma das größte Risiko? Begründen Sie in zwei Sätzen.</li>
+    </ol>
+    <details><summary>Lösungshinweis</summary><div>Der Cluster heißt <code>in-cluster</code> mit URL <code>https://kubernetes.default.svc</code> – das ist der Kubernetes-API-Server, wie er <em>aus einem Pod heraus</em> per DNS erreichbar ist. Argo CD läuft im Cluster und nutzt sein eigenes ServiceAccount-Token. API: <code>GET /api/v1/applications</code>.</div></details>
+  </div>
+</div></section>
+<!-- ===================== M4 ===================== -->
+<section class="module" id="m4"><div class="wrap reveal">
+  <div class="mhead"><span class="mnum">Modul 04</span><h2>Die erste Application – der Shop läuft aus Git</h2><span class="mtime">90 min</span></div>
+  <div class="bloom"><i class="b1">L1</i><i class="b2">L2</i><i class="b3">L3</i><i class="b4">L4</i></div>
+  <p class="lead">Jetzt wird Nordlicht Kaffees Shop zum ersten Mal von Argo CD ausgerollt. Wir gehen den „New App“-Dialog Feld für Feld durch – jedes Feld hat später eine Konsequenz.</p>
+
+  <div class="story"><b>Auftrag.</b> Mareike soll den Shop in einer <b>dev</b>-Umgebung deployen – aber diesmal so, dass Argo CD ihn kennt.</div>
+
+  <h3>Vorbereitung: Ihr Repo ist die Quelle</h3>
+  <p>Ersetzen Sie in allen YAMLs den Platzhalter <code>&lt;DEIN-ACCOUNT&gt;</code> durch Ihren GitHub-Namen (VS Code: <kbd>Strg</kbd>+<kbd>Shift</kbd>+<kbd>H</kbd>) und pushen Sie:</p>
+  <div class="codebox"><div class="lbl">PowerShell<button class="cp">Kopieren</button></div><pre><code class="language-powershell">git add . ; git commit -m "repoURL auf eigenes Repo setzen" ; git push</code></pre></div>
+
+  <h3>Weg 1: Die UI – jedes Feld erklärt</h3>
+  <div class="path"><span class="ui">Applications</span><em>›</em><span class="ui">+ NEW APP</span><em>›</em><span>Formular ausfüllen</span><em>›</em><span class="ui">CREATE</span></div>
+  <table>
+    <tr><th>Abschnitt / Feld</th><th>Wert für shop-dev</th><th>Bedeutung &amp; Konsequenz</th></tr>
+    <tr><td><b>GENERAL</b> · Application Name</td><td><code>shop-dev</code></td><td>Name des <code>Application</code>-Objekts im Namespace <code>argocd</code>. Kleinbuchstaben, Bindestriche. Später nicht änderbar.</td></tr>
+    <tr><td>Project Name</td><td><code>default</code></td><td>Grenzen, in denen die App leben darf (Modul 8). <code>default</code> erlaubt alles – vorerst.</td></tr>
+    <tr><td>Sync Policy</td><td><code>Manual</code></td><td>Manual = Argo CD zeigt Unterschiede, tut aber nichts ohne Klick. Automatic = synchronisiert selbständig. Wir starten manuell, um Drift <em>zu sehen</em>.</td></tr>
+    <tr><td>Sync Options ☐ Skip Schema Validation</td><td>aus</td><td>Manifeste nicht gegen das OpenAPI-Schema prüfen. Nur für CRDs, die der Cluster noch nicht kennt.</td></tr>
+    <tr><td>☐ Auto-Create Namespace</td><td><b>an</b></td><td>= <code>CreateNamespace=true</code>. Legt <code>shop-dev</code> an, falls nicht vorhanden. Sonst schlägt der erste Sync fehl.</td></tr>
+    <tr><td>☐ Prune Last</td><td>aus</td><td>Löschungen erst am Ende des Syncs, nach allen Waves (Modul 11).</td></tr>
+    <tr><td>☐ Apply Out of Sync Only</td><td>aus</td><td>Nur geänderte Ressourcen anwenden statt alle. Performance bei großen Apps; Risiko: übersieht Server-seitige Änderungen.</td></tr>
+    <tr><td>☐ Respect Ignore Differences</td><td>aus</td><td>Beim Sync ignorierte Felder <em>nicht</em> überschreiben (Modul 11).</td></tr>
+    <tr><td>☐ Server-Side Apply</td><td>aus</td><td><code>kubectl apply --server-side</code>: Field-Ownership statt Last-Applied-Annotation. Nötig bei sehr großen Manifesten (&gt; 256 KB Annotation-Limit) und wenn andere Controller Felder mitverwalten (HPA!).</td></tr>
+    <tr><td>Prune Propagation Policy</td><td><code>foreground</code></td><td>Wie Kubernetes abhängige Objekte löscht: foreground (Kinder zuerst, blockiert), background, orphan (Kinder bleiben).</td></tr>
+    <tr><td>☐ Replace</td><td>aus</td><td><code>kubectl replace</code> statt <code>apply</code>. Gefährlich: löscht und erzeugt neu (Downtime, verliert Status). Nur wenn apply an immutable Fields scheitert.</td></tr>
+    <tr><td>☐ Retry</td><td>aus</td><td>Fehlgeschlagene Syncs automatisch wiederholen (Limit, Backoff). Sinnvoll bei CRD-Reihenfolgeproblemen.</td></tr>
+    <tr><td><b>SOURCE</b> · Repository URL</td><td><code>https://github.com/&lt;acc&gt;/kaffee-shop-gitops.git</code></td><td>Woher der Sollzustand kommt. Public → keine Credentials. Dropdown zeigt unter Settings registrierte Repos; freie Eingabe ist erlaubt.</td></tr>
+    <tr><td>Revision</td><td><code>main</code></td><td>Branch, Tag oder Commit-SHA. <code>HEAD</code> = Default-Branch. Für prod später: Tags oder SHAs (unveränderlich).</td></tr>
+    <tr><td>Path</td><td><code>apps/shop/overlays/dev</code></td><td>Verzeichnis im Repo. Argo CD erkennt am Inhalt (kustomization.yaml, Chart.yaml, *.yaml), welches Tool es rendern muss.</td></tr>
+    <tr><td><b>DESTINATION</b> · Cluster URL</td><td><code>https://kubernetes.default.svc</code></td><td>Zielcluster. Alternativ „Cluster Name“ (<code>in-cluster</code>).</td></tr>
+    <tr><td>Namespace</td><td><code>shop-dev</code></td><td>Ziel-Namespace für Ressourcen <em>ohne</em> eigenes <code>metadata.namespace</code>. Unser Kustomize-Overlay setzt es zusätzlich – beides muss übereinstimmen, sonst ist die App dauerhaft OutOfSync.</td></tr>
+    <tr><td><b>KUSTOMIZE</b> (erscheint automatisch)</td><td>leer lassen</td><td>Argo CD hat <code>kustomization.yaml</code> erkannt. Hier könnten Sie Name-Prefix, Images, Replicas überschreiben – ohne Git zu ändern (Anti-Pattern, siehe unten).</td></tr>
+  </table>
+  <div class="co danger"><b>Anti-Pattern: Parameter-Overrides in der UI</b>Die Felder unter KUSTOMIZE/HELM/DIRECTORY erlauben Werte, die <em>nicht in Git</em> stehen. Damit ist die Application selbst nicht mehr aus Git reproduzierbar. Einzig sinnvoller Einsatz: kurz etwas ausprobieren. Alles Dauerhafte gehört ins Repo.</div>
+
+  <h3>Weg 2: Als YAML (der GitOps-Weg) und per CLI</h3>
+  <div class="codebox"><div class="tabs"><button class="on" data-t="yml">Application-YAML</button><button data-t="cli">argocd CLI</button></div>
+    <div class="tabpane on" data-p="yml"><pre><code class="language-yaml">apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: shop-dev
+  namespace: argocd                    # Applications leben im Argo CD-Namespace
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io   # beim Löschen der App auch Ressourcen löschen (Cascade)
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/&lt;acc&gt;/kaffee-shop-gitops.git
+    targetRevision: main
+    path: apps/shop/overlays/dev
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: shop-dev
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true</code></pre></div>
+    <div class="tabpane" data-p="cli"><pre><code class="language-bash">argocd app create shop-dev `
+  --repo https://github.com/&lt;acc&gt;/kaffee-shop-gitops.git `
+  --path apps/shop/overlays/dev `
+  --revision main `
+  --dest-server https://kubernetes.default.svc `
+  --dest-namespace shop-dev `
+  --sync-option CreateNamespace=true
+
+argocd app get shop-dev            # Status, Ressourcenliste
+argocd app diff shop-dev           # Git vs. Cluster
+argocd app sync shop-dev           # ausrollen
+argocd app history shop-dev        # Deploy-Historie</code></pre></div>
+  </div>
+  <p>Legen Sie die App an (UI <em>oder</em> <code>kubectl apply -f argocd/apps/shop-dev.yaml</code> – vorher <code>project: default</code> und den <code>automated</code>-Block dort auskommentieren, den bauen wir in Modul 5 bewusst ein).</p>
+
+  <h3>Was Sie jetzt sehen: OutOfSync + Missing</h3>
+  <p>Die App-Kachel ist gelb: <span class="pill bad">OutOfSync</span> <span class="pill na">Missing</span>. Das ist korrekt – Argo CD hat verglichen, aber (Manual) nichts getan. Klicken Sie auf die Kachel.</p>
+  <div class="term"><span class="t">Sync Status</span><span class="d"><b>Synced</b> = Live-Zustand entspricht dem gerenderten Git-Zustand. <b>OutOfSync</b> = Abweichung. <b>Unknown</b> = Vergleich nicht möglich (Repo unerreichbar, Render-Fehler).</span><span class="r">Beantwortet Mareikes Frage „stimmt der Cluster mit Git überein?“ auf einen Blick – pro App und pro Ressource.</span></div>
+  <div class="term"><span class="t">Health Status</span><span class="d">Unabhängig vom Sync: Läuft die Sache? <b>Healthy</b> (alle Replicas ready), <b>Progressing</b> (Rollout läuft), <b>Degraded</b> (Fehler, z. B. CrashLoop), <b>Suspended</b> (pausiert), <b>Missing</b> (existiert nicht), <b>Unknown</b>.</span><span class="r">Eine App kann Synced und Degraded sein: Git sagt Image <code>1.99</code>, das existiert nicht → korrekt angewendet, aber kaputt. Beide Achsen zusammen lesen (Matrix in Modul 14).</span></div>
+  <div class="term"><span class="t">Refresh vs. Hard Refresh</span><span class="d"><b>Refresh</b>: Git neu abfragen und Diff neu berechnen (nutzt Manifest-Cache). <b>Hard Refresh</b>: Cache verwerfen, Manifeste neu rendern. Kein Refresh ändert den Cluster!</span><span class="r">„Ich habe gepusht, aber Argo CD sieht nichts“ → Refresh (oder 3 Minuten warten). Helm-Chart-Änderungen ohne Versionswechsel → Hard Refresh.</span></div>
+
+  <h3>Die App-Detailseite</h3>
+  <div class="path"><span class="ui">App-Kachel</span><em>›</em><span>Kopfzeile: APP DETAILS · APP DIFF · SYNC · SYNC STATUS · HISTORY AND ROLLBACK · DELETE · REFRESH ▾</span></div>
+  <ul>
+    <li><b>Tree-Ansicht</b> (Standard): Application → Deployment → ReplicaSet → Pods. Jeder Knoten hat ein Kontextmenü (⋮): Sync, Delete, Logs, Exec, Details, Diff.</li>
+    <li><b>Pods / Network / List</b> (Icons oben rechts): andere Sichten auf dieselben Ressourcen; Network zeigt Service → Pod-Beziehungen.</li>
+    <li><b>APP DETAILS</b>: Tabs <em>Summary</em> (alle Felder editierbar!), <em>Parameters</em> (Kustomize/Helm-Overrides), <em>Manifest</em> (Application-YAML), <em>Events</em>.</li>
+    <li><b>APP DIFF</b>: Live vs. Desired, wahlweise „Compact diff“ und „Inline diff“. Ihr wichtigstes Werkzeug beim Troubleshooting.</li>
+    <li><b>Filter links</b>: nach Kind, Health, Sync, Namespace – bei großen Apps unverzichtbar.</li>
+  </ul>
+
+  <h3>Sync: der Dialog</h3>
+  <div class="path"><span class="ui">SYNC</span><em>›</em><span>Revision (Default: HEAD)</span><em>›</em><span>☐ Prune ☐ Dry Run ☐ Apply Only ☐ Force</span><em>›</em><span>Sync Options</span><em>›</em><span>Ressourcen an-/abwählen</span><em>›</em><span class="ui">SYNCHRONIZE</span></div>
+  <table>
+    <tr><th>Option</th><th>Bedeutung</th></tr>
+    <tr><td>Prune</td><td>Ressourcen löschen, die im Cluster sind, aber nicht mehr in Git. Ohne Haken bleiben sie stehen und werden als „OutOfSync (requires pruning)“ markiert.</td></tr>
+    <tr><td>Dry Run</td><td>Sync simulieren (Server-seitiger Dry Run). Zeigt Validierungsfehler, ändert nichts.</td></tr>
+    <tr><td>Apply Only</td><td>Nur apply, <em>keine</em> Hooks ausführen (Modul 11).</td></tr>
+    <tr><td>Force</td><td>Bei Konflikt Ressource löschen und neu anlegen (= Replace). Downtime-Risiko.</td></tr>
+    <tr><td>Ressourcen-Auswahl</td><td>Selektiver Sync einzelner Objekte – „nur die ConfigMap, nicht das Deployment“.</td></tr>
+  </table>
+  <p>Klicken Sie <b>SYNCHRONIZE</b>. Beobachten Sie in der Tree-Ansicht, wie Deployment → ReplicaSet → Pod entstehen und die Farben von gelb zu grün wechseln. Dann: <a href="http://localhost:8081" target="_blank">http://localhost:8081</a> – Nordlicht Kaffee, Umgebung <b>dev</b>.</p>
+
+  <div class="ex"><div class="exh">Erster GitOps-Zyklus <span class="pill" style="border-color:var(--bloom-3);color:#6EE7B7">L3 Anwenden</span></div>
+    <ol>
+      <li>Ändern Sie in <code>apps/shop/overlays/dev/kustomization.yaml</code> die Versionsnummer im HTML auf <code>1.1.0</code>. Commit, Push.</li>
+      <li>Klicken Sie <b>REFRESH</b>. Was zeigt die App? Öffnen Sie <b>APP DIFF</b> – welche Ressource ist betroffen?</li>
+      <li>Synchronisieren Sie und prüfen Sie den Shop im Browser.</li>
+      <li>Öffnen Sie <b>HISTORY AND ROLLBACK</b>: Wie viele Einträge, welche Commit-SHAs?</li>
+      <li><em>Analyse (L4):</em> Warum wurde ein <em>neuer</em> Pod erzeugt, obwohl nur eine ConfigMap geändert wurde? (Prüfen Sie den Namen der ConfigMap im Cluster.)</li>
+    </ol>
+    <details><summary>Lösungshinweis</summary><div>Kustomize hängt standardmäßig einen Hash an ConfigMap-Namen, wenn sie per <code>configMapGenerator</code> erzeugt werden – hier <em>nicht</em>, weil die ConfigMap als plain YAML vorliegt. Dann bleibt der Name gleich und nginx liest die Datei beim nächsten Request neu, ohne Pod-Neustart (Volume-Mount wird aktualisiert, ~1 min Verzögerung). Sollte ein neuer Pod entstanden sein, hat der Teilnehmer vermutlich das Deployment mitgeändert. Diskussionspunkt: Wie erzwingt man einen Rollout bei Config-Änderung? → <code>configMapGenerator</code> mit Hash oder Checksum-Annotation (das Helm-Chart in Modul 7 macht genau das).</div></details>
+  </div>
+</div></section>
+
+<!-- ===================== M5 ===================== -->
+<section class="module" id="m5"><div class="wrap reveal">
+  <div class="mhead"><span class="mnum">Modul 05</span><h2>Sync, Drift &amp; Self-Heal – Mareikes Vorfall wird unmöglich</h2><span class="mtime">90 min</span></div>
+  <div class="bloom"><i class="b1">L1</i><i class="b2">L2</i><i class="b3">L3</i><i class="b4">L4</i><i class="b5">L5</i></div>
+  <p class="lead">Das Herzstück. Wir schalten Automatisierung stufenweise ein und provozieren jedes Mal den Vorfall – bis er nicht mehr geht.</p>
+
+  <h3>Der Reconciliation-Loop zum Anfassen</h3>
+  <div class="sim" id="rec">
+    <h4>Git ↔ Argo CD ↔ Cluster</h4>
+    <div class="ctr">
+      <label class="toggle"><input type="checkbox" id="r-auto"> Auto-Sync</label>
+      <label class="toggle"><input type="checkbox" id="r-heal"> Self-Heal</label>
+      <label class="toggle"><input type="checkbox" id="r-prune"> Prune</label>
+      <span style="flex:1"></span>
+      <span id="r-sync" class="pill ok">Synced</span>
+      <span id="r-health" class="pill ok">Healthy</span>
+    </div>
+    <div class="panes">
+      <div class="pane"><h5>Git (Soll) · main</h5><div class="kv" id="r-git"></div>
+        <div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn" data-a="commit-rep">Commit: replicas 3</button>
+          <button class="btn" data-a="commit-img">Commit: Image 1.28</button>
+          <button class="btn" data-a="commit-rm">Commit: Service löschen</button>
+        </div></div>
+      <div class="arrow" id="r-arrow"><span>Argo CD</span><div class="line"><i></i></div><span id="r-msg">beobachtet</span></div>
+      <div class="pane"><h5>Cluster (Ist) · shop-dev</h5><div class="kv" id="r-live"></div>
+        <div class="pods" id="r-pods"></div>
+        <div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn danger" data-a="k-scale0">kubectl scale --replicas=0</button>
+          <button class="btn danger" data-a="k-crash">Pod crasht</button>
+        </div></div>
+    </div>
+    <div class="ctr"><button class="btn primary" data-a="sync">SYNC (manuell)</button><button class="btn" data-a="refresh">REFRESH</button><button class="btn" data-a="reset">Zurücksetzen</button><span style="color:var(--text-dim);font-size:.75rem">Reconcile-Intervall simuliert: 3 s statt 3 min</span></div>
+    <div class="log" id="r-log"></div>
+  </div>
+  <p>Spielen Sie es durch: Erst ohne Haken „kubectl scale“ – Argo CD meldet OutOfSync, tut aber nichts. Mit Auto-Sync: Ein Commit wird sofort ausgerollt, aber der manuelle Eingriff bleibt! Erst mit <b>Self-Heal</b> wird der Eingriff zurückgedreht. „Service löschen“ zeigt, wofür <b>Prune</b> da ist.</p>
+
+  <div class="term"><span class="t">Automated Sync</span><span class="d"><code>syncPolicy.automated</code>: Argo CD synchronisiert, sobald sich <em>Git</em> ändert (neue Revision erkannt) – nicht bei Cluster-Änderungen.</span><span class="r">Beseitigt den Klick, nicht den Drift. Mareikes Eingriff überlebt Auto-Sync, bis der nächste Commit kommt.</span></div>
+  <div class="term"><span class="t">Self-Heal</span><span class="d"><code>automated.selfHeal: true</code>: Argo CD synchronisiert auch dann, wenn sich der <em>Cluster</em> vom Git-Stand entfernt. Standard-Verzögerung 5 s, Backoff bei wiederholtem Drift.</span><span class="r">Das ist die Einstellung, die Mareikes Vorfall verhindert. Sie erzwingt gleichzeitig Disziplin: Manuelle Hotfixes im Cluster sind ab jetzt sinnlos – alles muss durch Git.</span></div>
+  <div class="term"><span class="t">Prune</span><span class="d"><code>automated.prune: true</code> bzw. Haken im Sync-Dialog: Ressourcen löschen, die nicht mehr in Git stehen.</span><span class="r">Ohne Prune sammeln sich Leichen an (alte Services, umbenannte Deployments). Mit Prune löscht ein falscher Commit echte Dinge – deshalb <code>PruneLast</code> und Schutz-Annotationen kennen.</span></div>
+
+  <h3>Auto-Sync für shop-dev einschalten – drei Wege</h3>
+  <div class="path"><span class="ui">App</span><em>›</em><span class="ui">APP DETAILS</span><em>›</em><span>Summary › Sync Policy</span><em>›</em><span class="ui">ENABLE AUTO-SYNC</span><em>›</em><span>☑ Prune Resources ☑ Self Heal</span></div>
+  <div class="codebox"><div class="tabs"><button class="on" data-t="y">YAML in Git (richtig)</button><button data-t="c">CLI</button></div>
+    <div class="tabpane on" data-p="y"><pre><code class="language-yaml">  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      allowEmpty: false        # Schutz: leeres Manifest-Set darf nicht alles löschen
+    syncOptions:
+      - CreateNamespace=true
+      - PruneLast=true         # Löschen erst nach erfolgreichem Apply
+    retry:
+      limit: 3
+      backoff: { duration: 5s, factor: 2, maxDuration: 3m }</code></pre></div>
+    <div class="tabpane" data-p="c"><pre><code class="language-bash">argocd app set shop-dev --sync-policy automated --auto-prune --self-heal
+argocd app set shop-dev --sync-option PruneLast=true
+argocd app get shop-dev | Select-String "Sync Policy"</code></pre></div>
+  </div>
+
+  <h3>Alle Sync Options im Überblick</h3>
+  <table>
+    <tr><th>Option</th><th>Wirkung</th><th>Typischer Einsatz</th></tr>
+    <tr><td><code>CreateNamespace=true</code></td><td>Ziel-Namespace anlegen</td><td>fast immer</td></tr>
+    <tr><td><code>PruneLast=true</code></td><td>Löschungen ans Ende (nach allen Waves)</td><td>wenn alte Objekte bis zum Umschalten gebraucht werden</td></tr>
+    <tr><td><code>ApplyOutOfSyncOnly=true</code></td><td>Nur abweichende Objekte anwenden</td><td>große Apps, API-Server-Last senken</td></tr>
+    <tr><td><code>ServerSideApply=true</code></td><td>Server-Side Apply (Field Manager)</td><td>große CRDs, HPA-verwaltete Replicas, geteilte Felder</td></tr>
+    <tr><td><code>Replace=true</code></td><td>replace statt apply</td><td>immutable Fields (Job-Spec, Selector) – Vorsicht</td></tr>
+    <tr><td><code>Validate=false</code></td><td>Schema-Validierung aus</td><td>unbekannte CRDs</td></tr>
+    <tr><td><code>RespectIgnoreDifferences=true</code></td><td>ignorierte Felder auch beim Apply nicht anfassen</td><td>Replicas bei HPA</td></tr>
+    <tr><td><code>FailOnSharedResource=true</code></td><td>Sync abbrechen, wenn Ressource anderer App gehört</td><td>Mandanten-Schutz</td></tr>
+    <tr><td><code>SkipDryRunOnMissingResource=true</code></td><td>Dry-Run für noch unbekannte CRD-Instanzen überspringen</td><td>CRD + CR im selben Sync</td></tr>
+    <tr><td><code>Prune=false</code> / <code>Delete=false</code> (per Ressource)</td><td>Annotation <code>argocd.argoproj.io/sync-options</code> auf einem Objekt</td><td>PVCs, Namespaces schützen</td></tr>
+  </table>
+
+  <h3>Reconcile-Timing beeinflussen</h3>
+  <p>Standard: alle 180 s pollt Argo CD Git (<code>timeout.reconciliation</code> in <code>argocd-cm</code>). Schneller wird es mit einem <b>Webhook</b>: GitHub → Repo → Settings → Webhooks → Payload URL <code>https://&lt;argocd&gt;/api/webhook</code>, Content type <code>application/json</code>, Secret in <code>argocd-secret</code> unter <code>webhook.github.secret</code>. Lokal ohne öffentliche URL nicht demonstrierbar – im Kurs zeigen wir den Effekt mit <code>argocd app get --refresh</code>.</p>
+
+  <div class="co danger"><b>Anti-Pattern: Self-Heal an, aber HPA oder Operator ändern Felder</b>Ein HorizontalPodAutoscaler setzt <code>spec.replicas</code>. Self-Heal setzt es zurück auf den Git-Wert. HPA setzt es wieder hoch. Endlosschleife, Flapping, Alarme. Lösung: <code>ignoreDifferences</code> für <code>/spec/replicas</code> plus <code>RespectIgnoreDifferences=true</code> – oder Replicas gar nicht in Git pflegen (Modul 11).</div>
+
+  <div class="ex"><div class="exh">Den Vorfall unmöglich machen <span class="pill" style="border-color:var(--bloom-3);color:#6EE7B7">L3</span> <span class="pill" style="border-color:var(--bloom-5);color:#FCA5A5">L5 Bewerten</span></div>
+    <ol>
+      <li>Aktivieren Sie Auto-Sync <em>ohne</em> Self-Heal (per Git-Commit auf <code>argocd/apps/shop-dev.yaml</code> und <code>kubectl apply</code> – oder UI). Führen Sie <code>kubectl -n shop-dev scale deploy kaffee-shop --replicas=0</code> aus. Was passiert in 3 Minuten? Was nicht?</li>
+      <li>Aktivieren Sie Self-Heal. Wiederholen Sie den Scale-Befehl. Beobachten Sie <code>kubectl -n shop-dev get deploy -w</code>.</li>
+      <li>Löschen Sie <code>service.yaml</code> aus der Base-Kustomization (Datei behalten, nur Eintrag entfernen), pushen Sie. Mit Prune / ohne Prune – was zeigt die UI jeweils? Machen Sie den Commit danach rückgängig (<code>git revert</code>).</li>
+      <li><em>Bewerten:</em> Soll <b>prod</b> Auto-Sync + Self-Heal bekommen? Nennen Sie je ein Argument dafür und dagegen. (Wir entscheiden das in Modul 8 für Nordlicht Kaffee.)</li>
+    </ol>
+    <details><summary>Lösungshinweis</summary><div>1: Nichts – Git hat sich nicht geändert. Die UI zeigt OutOfSync. 2: Innerhalb weniger Sekunden wieder 1 Replica. 3: Ohne Prune bleibt der Service, App zeigt „OutOfSync – 1 resource requires pruning“; mit Prune verschwindet er (Shop nicht mehr unter :8081 erreichbar). 4: Dafür: Drift-Schutz, Audit, schnelle Auslieferung. Dagegen: Ein fehlerhafter Merge geht ungebremst in prod; Freigabe-Prozesse (4-Augen) brauchen einen expliziten Sync-Schritt – üblich: Auto-Sync auf prod, aber mit Branch-Protection + Required Reviews im Git, oder Manual Sync + Notification.</div></details>
+  </div>
+</div></section>
+
+<!-- ===================== M6 ===================== -->
+<section class="module" id="m6"><div class="wrap reveal">
+  <div class="mhead"><span class="mnum">Modul 06</span><h2>Repositories, Credentials &amp; Cluster anbinden</h2><span class="mtime">45 min</span></div>
+  <div class="bloom"><i class="b1">L1</i><i class="b2">L2</i><i class="b3">L3</i><i class="b4">L4</i></div>
+  <p class="lead">Nordlicht Kaffee will das Repo auf privat stellen und einen zweiten Cluster für prod. Beides braucht Zugänge – und Argo CD hat dafür vier verschiedene Mechanismen.</p>
+
+  <h3>Repository-Zugänge</h3>
+  <div class="path"><span class="ui">Settings</span><em>›</em><span class="ui">Repositories</span><em>›</em><span class="ui">+ CONNECT REPO</span><em>›</em><span>Methode wählen: VIA HTTPS · VIA SSH · VIA GITHUB APP · VIA GOOGLE CLOUD</span></div>
+  <table>
+    <tr><th>Methode</th><th>Felder</th><th>Wann</th></tr>
+    <tr><td>HTTPS</td><td>Type (git/helm/oci), Project, Repository URL, Username, Password/Token, TLS client cert, ☐ Skip server verification, ☐ Enable LFS, Proxy</td><td>Schnell, mit PAT. Token in GitHub als „Fine-grained“ mit <em>Contents: Read</em> anlegen.</td></tr>
+    <tr><td>SSH</td><td>Repository URL (<code>git@github.com:…</code>), SSH private key, ☐ Skip server verification</td><td>Deploy Keys pro Repo, kein Ablaufdatum, Host-Key unter „Repository certificates and known hosts“ pflegen</td></tr>
+    <tr><td>GitHub App</td><td>App ID, Installation ID, Private Key, GitHub Enterprise URL</td><td>Beste Wahl für Organisationen: kein Personen-Token, Rate-Limits höher, zentrale Verwaltung</td></tr>
+    <tr><td>Credential Template</td><td>Nur URL-Präfix + Credentials</td><td>Ein Zugang für alle Repos unter <code>https://github.com/nordlicht-kaffee/</code></td></tr>
+  </table>
+  <div class="term"><span class="t">Credential Template</span><span class="d">Ein Secret mit Label <code>argocd.argoproj.io/secret-type: repo-creds</code> und einer URL als Präfix. Jedes Repo, dessen URL damit beginnt, nutzt diese Credentials automatisch.</span><span class="r">Nordlicht Kaffee wird 30 Repos haben. Ein Template statt 30 Einträge – und beim Token-Wechsel eine Stelle.</span></div>
+  <p>Deklarativ (der GitOps-Weg): Repos sind Secrets im Namespace <code>argocd</code>:</p>
+  <div class="codebox"><div class="lbl">yaml<button class="cp">Kopieren</button></div><pre><code class="language-yaml">apiVersion: v1
+kind: Secret
+metadata:
+  name: repo-kaffee-shop
+  namespace: argocd
+  labels:
+    argocd.argoproj.io/secret-type: repository     # oder: repo-creds für Templates
+stringData:
+  type: git
+  url: https://github.com/&lt;acc&gt;/kaffee-shop-gitops.git
+  username: not-used                                # bei PAT beliebig
+  password: github_pat_XXXXXXXX                     # NIE so in Git committen! -> Modul 12</code></pre></div>
+  <div class="codebox"><div class="lbl">CLI<button class="cp">Kopieren</button></div><pre><code class="language-bash">argocd repo add https://github.com/&lt;acc&gt;/kaffee-shop-gitops.git --username x --password &lt;PAT&gt;
+argocd repo list
+argocd repocreds add https://github.com/&lt;acc&gt;/ --username x --password &lt;PAT&gt;   # Template</code></pre></div>
+
+  <h3>Helm- und OCI-Repositories</h3>
+  <p>Type <code>helm</code> für klassische Chart-Repos (<code>https://charts.bitnami.com/bitnami</code>) und <code>oci</code> für OCI-Registries (<code>oci://ghcr.io/…</code>). Seit Argo CD 3.1 kann auch ein OCI-Artefakt eine reine Manifest-Quelle sein. Tag 2 nutzt ein Helm-Chart aus unserem Git-Repo, deshalb brauchen wir hier nichts.</p>
+
+  <h3>Cluster anbinden</h3>
+  <p>Cluster gibt es <em>nicht</em> in der UI zum Anlegen (nur zum Ansehen/Löschen). Der Weg: CLI mit einem kubeconfig-Kontext, oder deklarativ per Secret.</p>
+  <div class="codebox"><div class="lbl">PowerShell · zweiter kind-Cluster (falls vorbereitet)<button class="cp">Kopieren</button></div><pre><code class="language-powershell">kind get clusters                                   # schulung, prod
+# Argo CD erreicht "prod" nur intern (Docker-Netz) -> interne Kubeconfig verwenden
+kind get kubeconfig --name prod --internal | Out-File -Encoding ascii $env:USERPROFILE\.kube\prod-internal.yaml
+$env:KUBECONFIG = "$env:USERPROFILE\.kube\config;$env:USERPROFILE\.kube\prod-internal.yaml"
+argocd cluster add kind-prod --name prod --yes
+$env:KUBECONFIG = ""
+argocd cluster list</code></pre></div>
+  <p>Was <code>argocd cluster add</code> im Zielcluster tut: ServiceAccount <code>argocd-manager</code> im Namespace <code>kube-system</code> + ClusterRole <code>cluster-admin</code> + Token → als Secret mit Label <code>argocd.argoproj.io/secret-type: cluster</code> in Argo CD gespeichert.</p>
+  <div class="co warn"><b>cluster-admin auf dem Zielcluster</b>Das ist die Voreinstellung und für viele zu viel. Alternativen: <code>--namespace</code> mehrfach angeben (nur bestimmte Namespaces, dann Role statt ClusterRole) oder das Secret selbst mit eingeschränktem Token schreiben. Bei Multi-Cluster in Produktion: Argo CD pro Cluster (Hub-and-Spoke vs. Standalone) ist eine Architekturentscheidung – Modul 9 diskutiert sie.</div>
+
+  <div class="codebox"><div class="lbl">yaml · Cluster deklarativ<button class="cp">Kopieren</button></div><pre><code class="language-yaml">apiVersion: v1
+kind: Secret
+metadata:
+  name: cluster-prod
+  namespace: argocd
+  labels:
+    argocd.argoproj.io/secret-type: cluster
+    env: prod                              # Labels! -> ApplicationSet Cluster-Generator (Modul 9)
+stringData:
+  name: prod
+  server: https://prod-control-plane:6443
+  config: |
+    { "bearerToken": "&lt;token&gt;", "tlsClientConfig": { "insecure": false, "caData": "&lt;base64-ca&gt;" } }</code></pre></div>
+
+  <div class="ex"><div class="exh">Privates Repo &amp; Verbindungstest <span class="pill" style="border-color:var(--bloom-3);color:#6EE7B7">L3</span> <span class="pill" style="border-color:var(--bloom-4);color:var(--accent-soft)">L4</span></div>
+    <ol>
+      <li>Stellen Sie Ihr GitHub-Repo auf <b>Private</b>. Klicken Sie in Argo CD REFRESH auf shop-dev. Welcher Fehler erscheint, und in welchem Pod-Log finden Sie ihn?</li>
+      <li>Erzeugen Sie ein Fine-grained PAT (Contents: Read-only, nur dieses Repo). Verbinden Sie das Repo unter Settings → Repositories via HTTPS. Status muss „Successful“ sein.</li>
+      <li>Refresh erneut – die App muss wieder Synced sein.</li>
+      <li><em>Analyse:</em> Sie haben zwei Repos: <code>…/kaffee-shop-gitops</code> und <code>…/kaffee-shop-gitops.git</code>. Sind das für Argo CD dieselben? Testen Sie.</li>
+    </ol>
+    <details><summary>Lösungshinweis</summary><div>1: „ComparisonError: … authentication required“ – im Log von <code>argocd-repo-server</code>. 4: Argo CD normalisiert Repo-URLs (Suffix <code>.git</code>, Groß-/Kleinschreibung, SSH-vs-HTTPS teilweise) – die Credentials greifen für beide Schreibweisen. Dennoch: eine Schreibweise im Team festlegen.</div></details>
+  </div>
+</div></section>
+<!-- ===================== M7 ===================== -->
+<section class="module" id="m7"><div class="wrap reveal">
+  <div class="mhead"><span class="mnum">Modul 07</span><h2>Kustomize &amp; Helm – dev und prod aus einer Basis</h2><span class="mtime">60 min</span></div>
+  <div class="bloom"><i class="b1">L1</i><i class="b2">L2</i><i class="b3">L3</i><i class="b4">L4</i><i class="b5">L5</i></div>
+  <p class="lead">Tag 2 beginnt mit der Frage, die jedes Team stellt: Wie pflege ich dev, staging und prod, ohne alles dreimal zu kopieren? Argo CD ist dabei neutral – es rendert, was Sie ihm geben.</p>
+
+  <div class="story"><b>Auftrag.</b> Der Shop soll in <b>prod</b> mit 3 Replicas laufen, auf Port 8082. Alles andere identisch. Und das Plattform-Team fragt, ob Nordlicht nicht lieber Helm nehmen sollte.</div>
+
+  <h3>Wie Argo CD das Tool erkennt</h3>
+  <table>
+    <tr><th>Im Pfad liegt …</th><th>Argo CD nutzt</th><th>Konfiguration in <code>spec.source</code></th></tr>
+    <tr><td><code>kustomization.yaml</code></td><td>Kustomize (gebündelte Version, <code>argocd version</code> zeigt sie)</td><td><code>kustomize: { namePrefix, images, replicas, commonLabels, patches }</code></td></tr>
+    <tr><td><code>Chart.yaml</code></td><td>Helm (Template-Rendering, <em>kein</em> <code>helm install</code> – kein Release-Secret!)</td><td><code>helm: { valueFiles, values, valuesObject, parameters, releaseName, skipCrds }</code></td></tr>
+    <tr><td>nur <code>*.yaml</code>/<code>*.json</code></td><td>Directory (plain)</td><td><code>directory: { recurse, include, exclude, jsonnet }</code></td></tr>
+    <tr><td>Anderes</td><td>Config Management Plugin (CMP) als Sidecar</td><td><code>plugin: { name, env }</code></td></tr>
+  </table>
+  <div class="co info"><b>Helm ohne Tiller, ohne Release</b>Argo CD führt nur <code>helm template</code> aus und wendet die Ausgabe an. <code>helm list</code> auf dem Cluster zeigt daher nichts. Helm-Hooks werden in Argo CD-Hooks übersetzt (<code>pre-install</code> → PreSync), Helm-<code>test</code>-Hooks werden ignoriert. Wer echte Helm-Releases braucht, ist bei Flux besser aufgehoben – das ist eine legitime Architekturentscheidung.</div>
+
+  <h3>Kustomize: Basis + Overlays</h3>
+  <div class="codebox"><div class="tabs"><button class="on" data-t="b">base/kustomization.yaml</button><button data-t="d">overlays/dev</button><button data-t="p">overlays/prod</button></div>
+    <div class="tabpane on" data-p="b"><pre><code class="language-yaml">apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - deployment.yaml
+  - service.yaml
+  - configmap.yaml
+labels:
+  - pairs: { app.kubernetes.io/part-of: nordlicht }</code></pre></div>
+    <div class="tabpane" data-p="d"><pre><code class="language-yaml">apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: shop-dev
+resources: [ ../../base ]
+patches:
+  - target: { kind: ConfigMap, name: kaffee-shop-html }
+    patch: |-
+      - op: replace
+        path: /data/index.html
+        value: "...Umgebung: dev..."</code></pre></div>
+    <div class="tabpane" data-p="p"><pre><code class="language-yaml">apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: shop-prod
+resources: [ ../../base ]
+patches:
+  - target: { kind: Deployment, name: kaffee-shop }
+    patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 3
+  - target: { kind: Service, name: kaffee-shop }
+    patch: |-
+      - op: replace
+        path: /spec/ports/0/nodePort
+        value: 30082</code></pre></div>
+  </div>
+  <p>Lokal prüfen, bevor Argo CD es tut – der wichtigste Handgriff des Tages:</p>
+  <div class="codebox"><div class="lbl">PowerShell<button class="cp">Kopieren</button></div><pre><code class="language-powershell">kustomize build apps/shop/overlays/prod          # oder: kubectl kustomize apps/shop/overlays/prod
+kustomize build apps/shop/overlays/prod | kubectl apply --dry-run=server -f -</code></pre></div>
+  <p>Legen Sie <code>shop-prod</code> an (aus <code>argocd/apps/shop-prod.yaml</code>, weiterhin <code>project: default</code>) – <em>ohne</em> Auto-Sync. Synchronisieren Sie manuell. Shop prod: <a href="http://localhost:8082" target="_blank">http://localhost:8082</a>, drei Pods.</p>
+
+  <h3>Helm: dieselbe App als Chart</h3>
+  <p>Unter <code>charts/kaffee-shop/</code> liegt ein Chart. Application dazu:</p>
+  <div class="codebox"><div class="lbl">yaml<button class="cp">Kopieren</button></div><pre><code class="language-yaml">apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata: { name: shop-helm, namespace: argocd }
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/&lt;acc&gt;/kaffee-shop-gitops.git
+    targetRevision: main
+    path: charts/kaffee-shop
+    helm:
+      releaseName: kaffee-shop            # sonst = Application-Name
+      valueFiles: [ values.yaml ]          # relativ zum Chart; auch ../../env/prod.yaml erlaubt
+      valuesObject:                        # typisiert, direkt im YAML
+        replicaCount: 2
+        environment: helm
+      parameters:                          # = --set
+        - name: image.tag
+          value: 1.27-alpine
+  destination: { server: https://kubernetes.default.svc, namespace: shop-helm }
+  syncPolicy: { syncOptions: [ CreateNamespace=true ] }</code></pre></div>
+  <div class="path"><span class="ui">App shop-helm</span><em>›</em><span class="ui">APP DETAILS</span><em>›</em><span class="ui">PARAMETERS</span><em>›</em><span>Values-Files wählen, Values editieren, Parameter überschreiben</span><em>›</em><span class="ui">SAVE</span></div>
+  <p>Der Parameters-Tab zeigt alle Werte aus <code>values.yaml</code> und lässt sie überschreiben – wieder die Warnung aus Modul 4: Praktisch zum Testen, tabu für Dauerhaftes.</p>
+
+  <h3>Multiple Sources: Chart hier, Values dort</h3>
+  <p>Typisch: das Chart kommt aus einem Chart-Repo, die Values liegen im eigenen Git. Dafür gibt es <code>sources</code> (Plural) mit <code>ref</code>:</p>
+  <div class="codebox"><div class="lbl">yaml<button class="cp">Kopieren</button></div><pre><code class="language-yaml">spec:
+  sources:
+    - repoURL: https://charts.bitnami.com/bitnami
+      chart: redis
+      targetRevision: 20.x.x                  # Semver-Range erlaubt
+      helm:
+        valueFiles: [ $values/env/prod/redis-values.yaml ]
+    - repoURL: https://github.com/&lt;acc&gt;/kaffee-shop-gitops.git
+      targetRevision: main
+      ref: values                             # nur Referenz, wird nicht deployt</code></pre></div>
+
+  <h3>Bewertung: Kustomize oder Helm für Nordlicht Kaffee?</h3>
+  <table>
+    <tr><th></th><th>Kustomize</th><th>Helm</th></tr>
+    <tr><td>Denkmodell</td><td>Patches auf fertiges YAML – was man sieht, ist was man kriegt</td><td>Templates + Values – abstrakt, mächtig, schwerer zu lesen</td></tr>
+    <tr><td>Stärke</td><td>Eigene Apps, viele Umgebungen, kein Template-Wildwuchs</td><td>Fremdsoftware (Ingress-Controller, Datenbanken), Versionierung, Wiederverwendung</td></tr>
+    <tr><td>Schwäche</td><td>Bedingungen/Schleifen unmöglich; Overlays wachsen</td><td>Debugging von Template-Fehlern; <code>{{ }}</code>-Höllen</td></tr>
+    <tr><td>Kombination</td><td colspan="2">Häufig: Helm für Third-Party, Kustomize für eigene Apps. Oder Kustomize <code>helmCharts:</code>-Feld (in Argo CD per <code>kustomize.buildOptions: --enable-helm</code> in <code>argocd-cm</code> freischalten).</td></tr>
+  </table>
+
+  <div class="ex"><div class="exh">Drei Umgebungen, eine Basis <span class="pill" style="border-color:var(--bloom-3);color:#6EE7B7">L3</span> <span class="pill" style="border-color:var(--bloom-5);color:#FCA5A5">L5</span></div>
+    <ol>
+      <li>Erstellen Sie ein Overlay <code>staging</code> (2 Replicas, NodePort 30083 – vorher shop-helm löschen oder anderen Port nehmen). Application anlegen, syncen.</li>
+      <li>Ändern Sie in der <em>Base</em> das Image auf <code>nginx:1.27.2-alpine</code>. Was zeigen dev, staging, prod nach Refresh? Welche synchronisieren automatisch?</li>
+      <li>Provozieren Sie einen Render-Fehler (Tippfehler in <code>kustomization.yaml</code>). Welchen Status bekommt die App, wo steht die Fehlermeldung?</li>
+      <li><em>Bewerten:</em> Nordlicht hat 4 eigene Services und braucht PostgreSQL + Ingress-NGINX. Entwerfen Sie die Werkzeugwahl in einem Satz pro Komponente.</li>
+    </ol>
+    <details><summary>Lösungshinweis</summary><div>2: Alle drei werden OutOfSync; nur dev (Auto-Sync) rollt aus. Das ist gewollt: eine Base-Änderung propagiert kontrolliert. 3: Sync Status „Unknown“, Health „Unknown“, rotes Banner „ComparisonError“ mit Kustomize-Ausgabe; Details in <code>argocd app get</code> bzw. repo-server-Log. 4: Eigene Services → Kustomize (Base + Overlay je Env); PostgreSQL → Helm-Chart (z. B. CloudNativePG-Operator via Helm, dann CR per Kustomize); Ingress-NGINX → Helm mit Values im eigenen Repo (Multi-Source).</div></details>
+  </div>
+</div></section>
+
+<!-- ===================== M8 ===================== -->
+<section class="module" id="m8"><div class="wrap reveal">
+  <div class="mhead"><span class="mnum">Modul 08</span><h2>Projects &amp; RBAC – wer darf was, wohin</h2><span class="mtime">60 min</span></div>
+  <div class="bloom"><i class="b1">L1</i><i class="b2">L2</i><i class="b3">L3</i><i class="b4">L4</i><i class="b5">L5</i></div>
+  <p class="lead">Bis jetzt lief alles im Projekt <code>default</code> mit dem Admin-Account. Nordlicht Kaffee bekommt ein zweites Team (Logistik), und die Entwickler sollen prod sehen, aber nicht anfassen. Zeit für Grenzen.</p>
+
+  <div class="term"><span class="t">AppProject</span><span class="d">CRD, die eine Gruppe von Applications begrenzt: erlaubte Quell-Repos, erlaubte Ziel-Cluster/Namespaces, erlaubte Ressourcen-Kinds (Cluster-/Namespace-Ebene), Sync-Fenster, Signatur-Pflicht und projektlokale Rollen.</span><span class="r">Das Projekt ist die Mandanten-Grenze. Selbst ein Admin-Fehler in einer Application kann nicht aus dem Projekt ausbrechen: Eine App im Projekt <code>nordlicht</code> kann nicht in <code>kube-system</code> deployen, egal was im YAML steht.</span></div>
+
+  <div class="path"><span class="ui">Settings</span><em>›</em><span class="ui">Projects</span><em>›</em><span class="ui">+ NEW PROJECT</span><em>›</em><span>Name, Description</span><em>›</em><span class="ui">CREATE</span><em>›</em><span>Projekt öffnen: SOURCE REPOSITORIES · DESTINATIONS · CLUSTER RESOURCE ALLOW LIST · NAMESPACE RESOURCE DENY/ALLOW LIST · GPG SIGNATURE KEYS · ROLES · SYNC WINDOWS · SCOPED REPOSITORIES/CLUSTERS</span></div>
+
+  <div class="codebox"><div class="lbl">yaml · argocd/projects/nordlicht.yaml<button class="cp">Kopieren</button></div><pre><code class="language-yaml">apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata: { name: nordlicht, namespace: argocd }
+spec:
+  description: Alle Workloads der Rösterei
+  sourceRepos:
+    - https://github.com/&lt;acc&gt;/kaffee-shop-gitops.git     # Wildcards erlaubt: https://github.com/nordlicht/*
+  destinations:
+    - server: https://kubernetes.default.svc
+      namespace: shop-*                                   # Glob
+    - name: prod                                          # per Cluster-Name statt URL
+      namespace: shop-prod
+  clusterResourceWhitelist:                               # Cluster-weite Kinds explizit erlauben
+    - { group: "", kind: Namespace }
+  namespaceResourceBlacklist:                             # oder -Whitelist
+    - { group: "", kind: ResourceQuota }
+    - { group: "", kind: LimitRange }
+  roles:
+    - name: developer
+      policies:
+        - p, proj:nordlicht:developer, applications, get,  nordlicht/*,        allow
+        - p, proj:nordlicht:developer, applications, sync, nordlicht/shop-dev, allow
+      groups: [ nordlicht-devs ]                           # SSO-Gruppe
+      jwtTokens: []                                        # API-Tokens für CI
+  syncWindows:
+    - kind: deny
+      schedule: "0 22 * * 5"      # Freitag 22:00
+      duration: 58h               # bis Montag 08:00
+      applications: [ shop-prod ]
+      manualSync: false           # auch manuell verboten
+  orphanedResources:
+    warn: true                    # Objekte im Namespace ohne Application melden</code></pre></div>
+  <div class="term"><span class="t">Sync Window</span><span class="d">Zeitfenster (Cron + Dauer), in dem Syncs für bestimmte Apps/Namespaces/Cluster erlaubt (<code>allow</code>) oder verboten (<code>deny</code>) sind.</span><span class="r">„Kein Deployment am Freitagabend“ als Konfiguration statt als Regel im Wiki. Auto-Sync wartet, manueller Sync wird abgelehnt (außer <code>manualSync: true</code>).</span></div>
+  <div class="term"><span class="t">Orphaned Resources</span><span class="d">Ressourcen in einem Projekt-Namespace, die von keiner Application verwaltet werden.</span><span class="r">Findet Mareikes handgestartete Debug-Pods. Warnung in der UI, optional mit Ignore-Liste für bekannte Ausnahmen.</span></div>
+
+  <h3>Apps ins Projekt umziehen</h3>
+  <div class="codebox"><div class="lbl">PowerShell<button class="cp">Kopieren</button></div><pre><code class="language-powershell">kubectl apply -f argocd/projects/nordlicht.yaml
+argocd app set shop-dev  --project nordlicht
+argocd app set shop-prod --project nordlicht
+argocd proj get nordlicht</code></pre></div>
+  <p>Test der Grenze: Ändern Sie testweise die Destination von shop-dev auf Namespace <code>kube-system</code> (APP DETAILS → Summary → EDIT). Argo CD verweigert mit „application destination … is not permitted in project“.</p>
+
+  <h3>RBAC: Globale Policies</h3>
+  <p>Projektrollen gelten nur innerhalb des Projekts. Globale Rechte (Repos verwalten, Cluster, Projekte anlegen) stehen in <code>argocd-rbac-cm</code> im Casbin-Format:</p>
+  <div class="codebox"><div class="lbl">yaml · argocd-rbac-cm<button class="cp">Kopieren</button></div><pre><code class="language-yaml">apiVersion: v1
+kind: ConfigMap
+metadata: { name: argocd-rbac-cm, namespace: argocd }
+data:
+  policy.default: role:readonly            # was jeder Angemeldete darf (Alternativ: '' = nichts)
+  policy.csv: |
+    # p, &lt;subject&gt;, &lt;resource&gt;, &lt;action&gt;, &lt;object&gt;, &lt;effect&gt;
+    p, role:platform, *,            *,    */*,            allow
+    p, role:nordlicht-dev, applications, get,   nordlicht/*,   allow
+    p, role:nordlicht-dev, applications, sync,  nordlicht/shop-dev, allow
+    p, role:nordlicht-dev, logs,         get,   nordlicht/*,   allow
+    p, role:nordlicht-dev, exec,         create, nordlicht/shop-dev, allow
+    # g, &lt;user oder gruppe&gt;, &lt;rolle&gt;
+    g, mareike, role:nordlicht-dev
+    g, platform-team, role:platform         # SSO-Gruppe
+  scopes: '[groups, email]'</code></pre></div>
+  <table>
+    <tr><th>Resource</th><th>Actions</th><th>Objekt-Format</th></tr>
+    <tr><td><code>applications</code></td><td>get, create, update, delete, sync, override, action/&lt;group/kind/action&gt;</td><td><code>&lt;project&gt;/&lt;app&gt;</code></td></tr>
+    <tr><td><code>applicationsets</code></td><td>get, create, update, delete</td><td><code>&lt;project&gt;/&lt;appset&gt;</code></td></tr>
+    <tr><td><code>clusters</code>, <code>repositories</code>, <code>certificates</code>, <code>gpgkeys</code></td><td>get, create, update, delete</td><td>URL bzw. Name</td></tr>
+    <tr><td><code>projects</code></td><td>get, create, update, delete</td><td>Projektname</td></tr>
+    <tr><td><code>accounts</code></td><td>update (Passwort), apiKey</td><td>Accountname</td></tr>
+    <tr><td><code>logs</code> / <code>exec</code></td><td>get / create</td><td><code>&lt;project&gt;/&lt;app&gt;</code></td></tr>
+  </table>
+
+  <h3>Lokale Accounts (ohne SSO)</h3>
+  <div class="codebox"><div class="lbl">PowerShell<button class="cp">Kopieren</button></div><pre><code class="language-powershell"># Account anlegen: in argocd-cm
+kubectl -n argocd patch cm argocd-cm --type merge -p '{"data":{"accounts.mareike":"login, apiKey"}}'
+argocd account update-password --account mareike --new-password 'Dev2026!'
+argocd account list
+# Rechte prüfen, ohne sich anzumelden:
+argocd admin settings rbac can mareike sync applications nordlicht/shop-prod --policy-file rbac.csv
+argocd admin settings rbac can mareike sync applications nordlicht/shop-dev  --policy-file rbac.csv</code></pre></div>
+  <p><b>SSO</b> in einem Satz: In <code>argocd-cm</code> unter <code>dex.config</code> einen Connector (GitHub, GitLab, LDAP, SAML, Microsoft Entra ID) eintragen oder <code>oidc.config</code> direkt gegen einen OIDC-Provider; die Gruppen-Claims landen dann in den <code>g,</code>-Zeilen. Danach <code>admin.enabled: "false"</code>.</p>
+
+  <div class="co danger"><b>Anti-Pattern: policy.default: role:admin</b>Gelegentlich gesehen, „damit SSO-User erst mal alles sehen“. Damit ist jeder, der sich einloggen kann, Cluster-Admin über alle registrierten Cluster. Immer <code>role:readonly</code> oder leer.</div>
+
+  <div class="ex"><div class="exh">Mareike darf dev, aber nicht prod <span class="pill" style="border-color:var(--bloom-3);color:#6EE7B7">L3</span> <span class="pill" style="border-color:var(--bloom-4);color:var(--accent-soft)">L4</span></div>
+    <ol>
+      <li>Legen Sie den Account <code>mareike</code> an und die Rolle <code>role:nordlicht-dev</code> wie oben. Melden Sie sich in einem privaten Browserfenster als Mareike an.</li>
+      <li>Was sieht Mareike? Versuchen Sie einen Sync auf shop-prod. Welche Meldung? Versuchen Sie, unter Settings ein Repo anzulegen.</li>
+      <li>Fügen Sie ein Sync Window hinzu, das <em>jetzt</em> Syncs auf shop-dev verbietet (<code>schedule: "* * * * *"</code>, <code>duration: 1h</code>). Was passiert bei Auto-Sync? Was zeigt die App-Kachel? Entfernen Sie das Fenster wieder.</li>
+      <li><em>Analyse:</em> Sie brauchen ein CI-System, das nach dem Build einen Sync auslösen darf, sonst nichts. Entwerfen Sie Rolle + Token (Stichwort <code>argocd proj role create-token</code>).</li>
+    </ol>
+    <details><summary>Lösungshinweis</summary><div>2: Sie sieht nur Apps im Projekt nordlicht; Sync prod → „permission denied“; Repo anlegen → Button ausgegraut/403. 3: Auto-Sync pausiert, Kachel zeigt ein Uhr-Symbol „Sync window: deny“. 4: Projektrolle <code>ci</code> mit Policy <code>applications, sync, nordlicht/shop-dev, allow</code>; <code>argocd proj role create-token nordlicht ci --expires-in 90d</code>; das JWT in der CI als <code>ARGOCD_AUTH_TOKEN</code>. Noch besser: gar keinen Sync auslösen – die CI committet nur ins Git, Argo CD synchronisiert selbst (reines Pull-Modell).</div></details>
+  </div>
+</div></section>
+
+<!-- ===================== M9 ===================== -->
+<section class="module" id="m9"><div class="wrap reveal">
+  <div class="mhead"><span class="mnum">Modul 09</span><h2>App of Apps &amp; ApplicationSets – 2 Apps sind einfach, 200 auch</h2><span class="mtime">90 min</span></div>
+  <div class="bloom"><i class="b1">L1</i><i class="b2">L2</i><i class="b3">L3</i><i class="b4">L4</i><i class="b6">L6</i></div>
+  <p class="lead">Bisher haben Sie Applications per Hand oder <code>kubectl apply</code> angelegt – das ist selbst nicht GitOps. Jetzt verwaltet Argo CD seine eigenen Applications aus Git.</p>
+
+  <div class="story"><b>Auftrag.</b> Nordlicht Kaffee bekommt drei neue Services (Kasse, Lager, Newsletter), jeweils in dev/staging/prod. Neun Applications von Hand? Nein.</div>
+
+  <h3>Muster 1: App of Apps</h3>
+  <p>Eine „Root“-Application zeigt auf ein Verzeichnis, das <em>Application-Manifeste</em> enthält. Argo CD deployt diese in seinen eigenen Namespace – und damit entstehen die Kind-Apps.</p>
+  <div class="diagram"><pre class="mermaid">
+flowchart LR
+  G[("Git: argocd/apps/*")] --> R[nordlicht-root<br/>Application]
+  R --> A1[shop-dev]
+  R --> A2[shop-prod]
+  R --> A3[shop-helm]
+  A1 --> N1[(ns shop-dev)]
+  A2 --> N2[(ns shop-prod)]
+  A3 --> N3[(ns shop-helm)]
+  style R fill:#D4860A,color:#1a1204
+  </pre><div class="cap">Die Root-App deployt Applications; die Applications deployen Workloads. Alles in Git.</div></div>
+  <div class="codebox"><div class="lbl">PowerShell<button class="cp">Kopieren</button></div><pre><code class="language-powershell"># Vorher: die von Hand angelegten Apps löschen, aber Ressourcen behalten (non-cascading):
+argocd app delete shop-dev --cascade=false ; argocd app delete shop-prod --cascade=false
+kubectl apply -f argocd/root-app.yaml
+argocd app list      # nordlicht-root + shop-dev + shop-prod erscheinen</code></pre></div>
+  <div class="term"><span class="t">Finalizer / Cascade</span><span class="d"><code>resources-finalizer.argocd.argoproj.io</code> auf einer Application bedeutet: Beim Löschen der App werden auch ihre Ressourcen gelöscht (Cascade). Ohne Finalizer bleibt der Workload stehen.</span><span class="r">Bei App of Apps entscheidend: Löscht die Root-App ein Kind mit Finalizer, ist der Shop weg. <code>--cascade=false</code> bzw. Finalizer weglassen, wenn nur die Verwaltung wechseln soll.</span></div>
+  <div class="co warn"><b>Löschen in der UI</b>DELETE-Dialog bietet <b>Foreground</b> (App + Ressourcen, wartet), <b>Background</b> (App + Ressourcen, asynchron), <b>Non-cascading</b> (nur App, Ressourcen bleiben). Der Standard ist Foreground – in prod ist das die gefährlichste Schaltfläche der Oberfläche. RBAC-Action <code>delete</code> entsprechend eng vergeben.</div>
+
+  <h3>Muster 2: ApplicationSet</h3>
+  <div class="term"><span class="t">ApplicationSet</span><span class="d">CRD mit <em>Generatoren</em>, die Parameter-Sätze erzeugen, und einem <em>Template</em>, das je Parameter-Satz eine Application rendert. Der applicationset-controller hält die erzeugten Apps synchron zum Set.</span><span class="r">Neun Apps aus einer Datei. Neuer Service = neues Verzeichnis, neue Umgebung = neuer Listeneintrag. Kein Copy-Paste von Application-YAML.</span></div>
+
+  <div class="sim"><h4>Generator-Playground</h4>
+    <div id="aset">
+      <div><div style="font-size:.8rem;color:var(--text-muted);margin-bottom:6px">List-Generator: Elemente (eines pro Zeile: <code>env,cluster,autoSync</code>)</div>
+        <textarea id="as-in">dev,in-cluster,true
+staging,in-cluster,true
+prod,prod,false</textarea>
+        <div style="font-size:.8rem;color:var(--text-muted);margin:10px 0 6px">Services (Matrix-Generator, kommasepariert)</div>
+        <input id="as-svc" value="shop,kasse,lager" style="width:100%;background:#0b0d10;color:var(--text);border:1px solid var(--border);border-radius:10px;padding:10px;font-family:'JetBrains Mono';font-size:.8rem">
+        <div style="margin-top:10px;font-size:.78rem;color:var(--text-dim)">Template: <code>name: {{svc}}-{{env}}</code> · <code>path: apps/{{svc}}/overlays/{{env}}</code> · <code>destination.name: {{cluster}}</code></div>
+      </div>
+      <div><div style="font-size:.8rem;color:var(--text-muted);margin-bottom:6px">Erzeugte Applications: <b id="as-count"></b></div><div class="out" id="as-out"></div></div>
+    </div>
+  </div>
+
+  <table>
+    <tr><th>Generator</th><th>Erzeugt Parameter aus …</th><th>Nordlicht-Anwendung</th></tr>
+    <tr><td><code>list</code></td><td>fester Liste im YAML</td><td>Umgebungen dev/staging/prod</td></tr>
+    <tr><td><code>git</code> (directories)</td><td>Verzeichnissen im Repo (Glob)</td><td>jeder Ordner unter <code>apps/*</code> = ein Service</td></tr>
+    <tr><td><code>git</code> (files)</td><td>JSON/YAML-Dateien im Repo</td><td><code>envs/prod/config.json</code> mit Cluster, Replicas …</td></tr>
+    <tr><td><code>clusters</code></td><td>in Argo CD registrierten Clustern (per Label-Selector)</td><td>alle Cluster mit <code>env=prod</code></td></tr>
+    <tr><td><code>matrix</code></td><td>kartesischem Produkt zweier Generatoren</td><td>Services × Umgebungen = 9 Apps</td></tr>
+    <tr><td><code>merge</code></td><td>Zusammenführen per Schlüssel</td><td>Basis-Liste + Overrides je Cluster</td></tr>
+    <tr><td><code>pullRequest</code></td><td>offenen PRs (GitHub, GitLab, …)</td><td>Preview-Umgebung je PR, verschwindet mit dem Merge</td></tr>
+    <tr><td><code>scmProvider</code></td><td>allen Repos einer GitHub-Org/GitLab-Gruppe</td><td>jedes neue Repo mit <code>deploy/</code> wird automatisch App</td></tr>
+    <tr><td><code>plugin</code></td><td>eigenem HTTP-Service</td><td>Inventar aus CMDB</td></tr>
+  </table>
+
+  <div class="codebox"><div class="tabs"><button class="on" data-t="m">Matrix: Git × List</button><button data-t="cl">Cluster-Generator</button><button data-t="pr">Pull-Request-Generator</button></div>
+    <div class="tabpane on" data-p="m"><pre><code class="language-yaml">apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata: { name: nordlicht-services, namespace: argocd }
+spec:
+  goTemplate: true
+  goTemplateOptions: [ missingkey=error ]
+  generators:
+    - matrix:
+        generators:
+          - git:
+              repoURL: https://github.com/&lt;acc&gt;/kaffee-shop-gitops.git
+              revision: main
+              directories: [ { path: apps/* } ]         # -> .path.basename = shop, kasse, ...
+          - list:
+              elements:
+                - { env: dev,  autoSync: "true" }
+                - { env: prod, autoSync: "false" }
+  template:
+    metadata:
+      name: '{{ .path.basename }}-{{ .env }}'
+      labels: { env: '{{ .env }}' }
+    spec:
+      project: nordlicht
+      source:
+        repoURL: https://github.com/&lt;acc&gt;/kaffee-shop-gitops.git
+        targetRevision: main
+        path: '{{ .path.path }}/overlays/{{ .env }}'
+      destination: { server: https://kubernetes.default.svc, namespace: '{{ .path.basename }}-{{ .env }}' }
+      syncPolicy: { syncOptions: [ CreateNamespace=true ] }
+  templatePatch: |                                   # bedingte Teile
+    {{- if eq .autoSync "true" }}
+    spec:
+      syncPolicy:
+        automated: { prune: true, selfHeal: true }
+    {{- end }}
+  syncPolicy:
+    preserveResourcesOnDeletion: true              # AppSet löschen != Apps löschen</code></pre></div>
+    <div class="tabpane" data-p="cl"><pre><code class="language-yaml">generators:
+  - clusters:
+      selector:
+        matchLabels: { env: prod }        # Labels aus dem Cluster-Secret (Modul 6)
+template:
+  metadata: { name: 'shop-{{ .name }}' }  # .name, .server, .metadata.labels.*
+  spec:
+    destination: { server: '{{ .server }}', namespace: shop }</code></pre></div>
+    <div class="tabpane" data-p="pr"><pre><code class="language-yaml">generators:
+  - pullRequest:
+      github:
+        owner: &lt;acc&gt;
+        repo: kaffee-shop-gitops
+        tokenRef: { secretName: github-token, key: token }
+        labels: [ preview ]                # nur PRs mit diesem Label
+      requeueAfterSeconds: 60
+template:
+  metadata: { name: 'shop-pr-{{ .number }}' }
+  spec:
+    source:
+      targetRevision: '{{ .head_sha }}'
+      path: apps/shop/overlays/dev
+    destination: { server: https://kubernetes.default.svc, namespace: 'preview-{{ .number }}' }</code></pre></div>
+  </div>
+
+  <h3>Wichtige ApplicationSet-Einstellungen</h3>
+  <table>
+    <tr><th>Feld</th><th>Wirkung</th></tr>
+    <tr><td><code>goTemplate: true</code></td><td>Go-Templates statt einfacher <code>{{param}}</code>-Ersetzung: Bedingungen, Funktionen (sprig), <code>missingkey=error</code> gegen stille Tippfehler.</td></tr>
+    <tr><td><code>syncPolicy.applicationsSync</code></td><td><code>create-only</code> / <code>create-update</code> / <code>create-delete</code> / <code>sync</code> (Default): steuert, ob das Set bestehende Apps überschreibt oder löscht. Schutz vor „AppSet-Änderung löscht 200 Apps“.</td></tr>
+    <tr><td><code>preserveResourcesOnDeletion</code></td><td>Beim Löschen des Sets bleiben Apps und Workloads.</td></tr>
+    <tr><td><code>strategy.type: RollingSync</code></td><td>Progressive Syncs: Apps in Schritten (z. B. erst dev, dann staging, dann prod) – in 3.x Beta-Feature, per Flag im Controller aktivieren.</td></tr>
+    <tr><td><code>ignoreApplicationDifferences</code></td><td>Felder der Apps, die Nutzer (oder Image Updater) verändern dürfen, ohne dass das Set sie zurücksetzt.</td></tr>
+  </table>
+
+  <div class="co danger"><b>Anti-Pattern: ApplicationSet ohne Schutz in prod</b>Standard ist <code>applicationsSync: sync</code> plus Finalizer: Wer die Datei des Sets fehlerhaft ändert (z. B. Generator gibt leere Liste), löscht damit <em>alle</em> Apps samt Workloads. Immer <code>preserveResourcesOnDeletion: true</code>, in prod oft <code>create-update</code>, und die Set-Datei selbst hinter Branch-Protection.</div>
+
+  <h3>Architektur-Diskussion: Ein Argo CD oder viele?</h3>
+  <div class="grid2">
+    <div class="card"><h4 style="margin-top:0">Hub-and-Spoke</h4><p style="font-size:.9rem;color:var(--text-muted);margin:0">Ein zentrales Argo CD verwaltet alle Cluster. Pro: eine UI, ein RBAC, Cluster-Generator. Contra: Single Point of Failure, Hub braucht Admin-Zugang überall, Netzwerkpfade.</p></div>
+    <div class="card"><h4 style="margin-top:0">Standalone pro Cluster</h4><p style="font-size:.9rem;color:var(--text-muted);margin:0">Jeder Cluster hat sein Argo CD (per Bootstrap-Skript). Pro: Isolation, kein Cross-Cluster-Zugang, Cluster stirbt allein. Contra: N UIs, Konfiguration vervielfacht (aber: aus Git!).</p></div>
+  </div>
+
+  <div class="ex"><div class="exh">Das komplette Nordlicht-Portfolio <span class="pill" style="border-color:var(--bloom-3);color:#6EE7B7">L3</span> <span class="pill" style="border-color:var(--bloom-6);color:#F9A8D4">L6 Erschaffen</span></div>
+    <ol>
+      <li>Wenden Sie <code>argocd/applicationsets/shop-git-dirs.yaml</code> an. Legen Sie ein neues Overlay <code>staging</code> an, pushen Sie – wie schnell erscheint die App? Löschen Sie das Verzeichnis wieder – was passiert mit der App und dem Namespace?</li>
+      <li>Ergänzen Sie das AppSet um <code>preserveResourcesOnDeletion</code> und <code>applicationsSync: create-update</code>. Wiederholen Sie Schritt 1. Unterschied?</li>
+      <li><em>Erschaffen:</em> Kopieren Sie <code>apps/shop</code> nach <code>apps/kasse</code> (anderes HTML, andere NodePorts 30090/30091). Schreiben Sie ein Matrix-ApplicationSet (Git-Directories × List dev/prod), das vier Apps erzeugt, und bringen Sie alle vier auf Synced/Healthy.</li>
+    </ol>
+    <details><summary>Lösungshinweis</summary><div>1: Der Git-Generator pollt im <code>requeueAfterSeconds</code>-Takt (Default 180 s) – dann erscheint <code>shop-staging</code>. Beim Löschen des Verzeichnisses löscht das Set die App; mit Finalizer im Template auch die Workloads und (bei <code>CreateNamespace</code>) <em>nicht</em> den Namespace – der bleibt als Leiche (Argo CD löscht angelegte Namespaces nicht). 2: Mit <code>create-update</code> bleibt die App bestehen, obwohl das Verzeichnis weg ist – sie wird OutOfSync/Unknown; das Aufräumen ist bewusst manuell. 3: Achten Sie auf eindeutige NodePorts und darauf, dass das Kasse-Overlay den Namespace <code>kasse-dev</code>/<code>kasse-prod</code> setzt.</div></details>
+  </div>
+</div></section>
+<!-- ===================== M10 CI/CD ===================== -->
+<section class="module" id="m10"><div class="wrap reveal">
+  <div class="mhead"><span class="mnum">Modul 10</span><h2>CI/CD-Integration – wie kommt das neue Image nach Git?</h2><span class="mtime">60 min</span></div>
+  <div class="bloom"><i class="b1">L1</i><i class="b2">L2</i><i class="b3">L3</i><i class="b4">L4</i><i class="b5">L5</i></div>
+  <p class="lead">Argo CD deployt, was in Git steht. Aber wer schreibt den neuen Image-Tag dorthin? Hier treffen sich Ihre bestehende CI-Pipeline und GitOps – und die Schnittstelle ist ein Commit, kein <code>kubectl</code>.</p>
+
+  <div class="story"><b>Auftrag.</b> Die Entwickler von Nordlicht Kaffee bauen den Shop mit GitHub Actions. Bisher endete die Pipeline mit <code>kubectl set image</code> und Cluster-Credentials im CI-Secret-Store. Das soll weg. Die Pipeline soll bauen, testen, das Image pushen – und danach <b>nur noch Git anfassen</b>.</div>
+
+  <h3>Das Zwei-Repo-Muster</h3>
+  <div class="diagram"><pre class="mermaid">
+flowchart LR
+  DEV[Entwickler] -->|Code-Commit| APP[(App-Repo<br/>Quellcode + Dockerfile)]
+  APP -->|Trigger| CI[CI-Pipeline<br/>build · test · push]
+  CI -->|docker push| REG[(Registry<br/>ghcr.io)]
+  CI -->|Commit: neuer Image-Tag| GIT[(GitOps-Repo<br/>kaffee-shop-gitops)]
+  GIT -->|Webhook / Poll| ARGO[Argo CD]
+  ARGO -->|Sync| K8S[(Cluster)]
+  K8S -->|docker pull| REG
+  style CI fill:#1C2128,stroke:#3B82F6
+  style ARGO fill:#D4860A,color:#1a1204,stroke:#F0A832
+  </pre><div class="cap">Die CI kennt den Cluster nicht. Ihr letzter Schritt ist ein Commit ins GitOps-Repo. Alles danach ist Argo CDs Sache.</div></div>
+
+  <div class="term"><span class="t">App-Repo vs. GitOps-Repo</span><span class="d">Trennung von Quellcode (App-Repo, viele Commits, Feature-Branches) und Deployment-Beschreibung (GitOps-Repo, wenige Commits, jeder ist ein Deployment). Argo CD zeigt nur auf das zweite.</span><span class="r">Ein Commit im GitOps-Repo = ein Deployment. Damit ist <code>git log</code> dort ein lückenloses Deployment-Protokoll – und PR-Reviews dort sind Deployment-Freigaben.</span></div>
+  <div class="term"><span class="t">Image-Tag-Bump</span><span class="d">Der Commit, der in Kustomize (<code>images:</code>) oder Helm-Values (<code>image.tag</code>) die neue Version einträgt. Immutable Tags (SHA, Semver), nie <code>latest</code>.</span><span class="r">Der einzige Schreibzugriff, den die CI auf das GitOps-Repo braucht. <code>latest</code> würde Argo CD nie als Änderung erkennen – Git wäre gleich, nur das Image anders.</span></div>
+  <div class="term"><span class="t">Promotion</span><span class="d">Dieselbe Image-Version nacheinander in dev → staging → prod übernehmen. In Git: derselbe Tag in drei Overlays, oft drei PRs.</span><span class="r">Wer promotet, entscheidet über Freigaben: Automatisch nach dev (Pipeline committet direkt auf <code>main</code>), manuell nach prod (Pipeline öffnet einen PR). Werkzeuge dafür: Kargo, Argo CD Image Updater.</span></div>
+
+  <div class="sim" id="cicd"><h4>Von Push bis Healthy</h4>
+    <div class="ctr" style="margin-bottom:12px">
+      <label class="toggle"><input type="radio" name="ci-mode" value="pull" checked> Pull: CI committet, Argo CD pollt/Webhook</label>
+      <label class="toggle"><input type="radio" name="ci-mode" value="push"> Push: CI ruft zusätzlich <code>argocd app sync</code></label>
+      <button class="btn primary" id="ci-run" style="margin-left:auto">git push auf App-Repo</button><button class="btn" id="ci-reset">Reset</button>
+    </div>
+    <div id="ci-lanes">
+      <div class="lane" data-k="build"><span class="nm">CI · build</span><div class="bar"><i></i><span>docker build · Unit-Tests</span></div></div>
+      <div class="lane" data-k="push"><span class="nm">CI · push</span><div class="bar"><i></i><span>docker push ghcr.io/nordlicht/shop:1.2.0</span></div></div>
+      <div class="lane" data-k="bump"><span class="nm">CI · bump</span><div class="bar"><i></i><span>kustomize edit set image … → git commit → git push (GitOps-Repo)</span></div></div>
+      <div class="lane" data-k="trig"><span class="nm">CI · sync</span><div class="bar"><i></i><span>argocd app sync shop-dev &amp;&amp; argocd app wait</span></div></div>
+      <div class="lane" data-k="detect"><span class="nm">Argo CD</span><div class="bar"><i></i><span id="ci-detect">Webhook empfangen → Refresh → OutOfSync</span></div></div>
+      <div class="lane" data-k="sync"><span class="nm">Argo CD</span><div class="bar"><i></i><span>Auto-Sync → Deployment Rollout</span></div></div>
+      <div class="lane" data-k="ok"><span class="nm">Cluster</span><div class="bar"><i></i><span>Pods Healthy · Shop v1.2.0 live</span></div></div>
+    </div>
+    <p style="font-size:.82rem;color:var(--text-muted);margin:10px 0 0" id="ci-note">Im Pull-Modus braucht die CI kein Argo CD-Token und keinen Cluster-Zugang. Sie ist fertig, sobald der Commit drin ist.</p>
+  </div>
+
+  <h3>GitHub Actions – der Bump-Schritt</h3>
+  <p>In Ihrem Schulungs-Repo liegt unter <code>.github/workflows/promote-dev.yaml</code> ein Workflow, der den Build simuliert (wir haben kein eigenes Image) und die Version im dev-Overlay hochsetzt:</p>
+  <div class="codebox"><div class="tabs"><button class="on" data-t="gha">GitHub Actions</button><button data-t="gl">GitLab CI</button><button data-t="jk">Jenkins</button></div>
+    <div class="tabpane on" data-p="gha"><pre><code class="language-yaml">name: promote-dev
+on:
+  workflow_dispatch:
+    inputs:
+      version: { description: "Neue Shop-Version", required: true, default: "1.2.0" }
+permissions:
+  contents: write                          # darf ins Repo committen
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # In echt hier: docker build / push mit ${{ inputs.version }} als Tag
+      - name: Version im dev-Overlay setzen
+        run: |
+          sed -i "s/Version: &lt;span class=\"v\"&gt;[0-9.]*&lt;/Version: &lt;span class=\"v\"&gt;${{ inputs.version }}&lt;/" \
+            apps/shop/overlays/dev/kustomization.yaml
+          # Bei echtem Image stattdessen:
+          # cd apps/shop/overlays/dev && kustomize edit set image nginx=ghcr.io/nordlicht/shop:${{ inputs.version }}
+      - name: Commit &amp; Push
+        run: |
+          git config user.name  "ci-bot"
+          git config user.email "ci@nordlicht.example"
+          git commit -am "deploy(dev): shop ${{ inputs.version }}" || echo "keine Aenderung"
+          git push
+      # Optional (Push-Modus): Sync erzwingen und auf Healthy warten
+      # - uses: clowdhaus/argo-cd-action@v2
+      #   with: { command: app sync shop-dev --grpc-web }
+      #   env:  { ARGOCD_SERVER: ${{ secrets.ARGOCD_SERVER }}, ARGOCD_AUTH_TOKEN: ${{ secrets.ARGOCD_TOKEN }} }</code></pre></div>
+    <div class="tabpane" data-p="gl"><pre><code class="language-yaml">stages: [build, deploy]
+build:
+  stage: build
+  image: docker:27
+  services: [docker:27-dind]
+  script:
+    - docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA .
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
+bump-gitops:
+  stage: deploy
+  image: alpine/git
+  script:
+    - git clone https://oauth2:${GITOPS_TOKEN}@gitlab.example.com/nordlicht/kaffee-shop-gitops.git
+    - cd kaffee-shop-gitops/apps/shop/overlays/dev
+    - apk add kustomize &amp;&amp; kustomize edit set image shop=$CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
+    - git commit -am "deploy(dev): shop $CI_COMMIT_SHORT_SHA" &amp;&amp; git push
+  only: [main]                          # prod: stattdessen Merge Request oeffnen (glab mr create)</code></pre></div>
+    <div class="tabpane" data-p="jk"><pre><code class="language-bash">pipeline {
+  agent any
+  environment { GITOPS = credentials('gitops-token') }
+  stages {
+    stage('Build') { steps { sh 'docker build -t ghcr.io/nordlicht/shop:${BUILD_NUMBER} . &amp;&amp; docker push ghcr.io/nordlicht/shop:${BUILD_NUMBER}' } }
+    stage('Bump GitOps') {
+      steps {
+        sh '''
+          git clone https://${GITOPS}@github.com/nordlicht/kaffee-shop-gitops.git
+          cd kaffee-shop-gitops/apps/shop/overlays/dev
+          kustomize edit set image shop=ghcr.io/nordlicht/shop:${BUILD_NUMBER}
+          git commit -am "deploy(dev): shop ${BUILD_NUMBER}" &amp;&amp; git push
+        '''
+      }
+    }
+    stage('Wait for Argo CD') {       // optional, Push-Modus
+      steps { sh 'argocd app wait shop-dev --health --timeout 300' }
+    }
+  }
+}</code></pre></div>
+  </div>
+  <p>Klickpfad zum Auslösen: <span class="path" style="display:inline-flex"><span class="ui">GitHub</span><em>›</em><span>Actions</span><em>›</em><span>promote-dev</span><em>›</em><span class="ui">Run workflow</span><em>›</em><span>version eingeben</span></span></p>
+
+  <h3>Soll die CI den Sync auslösen?</h3>
+  <table>
+    <tr><th></th><th>Pull (nur Commit)</th><th>Push (Commit + <code>argocd app sync</code>)</th></tr>
+    <tr><td>Was die CI braucht</td><td>Schreibzugriff auf das GitOps-Repo</td><td>zusätzlich Argo CD-Token mit <code>sync</code>-Recht, Netzwerkweg zu Argo CD</td></tr>
+    <tr><td>Latenz</td><td>bis 3 min (Polling) oder Sekunden (Webhook)</td><td>sofort</td></tr>
+    <tr><td>Pipeline weiß, ob das Deployment klappt</td><td>nein – Notifications (Modul 14) übernehmen das</td><td>ja, per <code>argocd app wait --health</code></td></tr>
+    <tr><td>Sicherheit</td><td>CI hat keinen Zugang zur Laufzeitumgebung</td><td>Token ist ein Angriffsziel; per Projektrolle eng begrenzen (Modul 8)</td></tr>
+    <tr><td>Empfehlung</td><td>Standard für dev und prod mit Auto-Sync</td><td>wenn Pipeline-Gates das Ergebnis brauchen (z. B. E2E-Tests nach Deployment)</td></tr>
+  </table>
+  <div class="codebox"><div class="lbl">Token für die CI (Projektrolle, Modul 8)<button class="cp">Kopieren</button></div><pre><code class="language-bash">argocd proj role create nordlicht ci --description "CI darf dev syncen"
+argocd proj role add-policy nordlicht ci --action sync --permission allow --object shop-dev
+argocd proj role add-policy nordlicht ci --action get  --permission allow --object '*'
+argocd proj role create-token nordlicht ci --expires-in 90d      # -> als Secret ARGOCD_TOKEN in der CI</code></pre></div>
+
+  <h3>Alternative: Argo CD Image Updater</h3>
+  <p>Statt dass die CI committet, beobachtet ein Controller die Registry und schreibt neue Tags selbst ins Git („write-back"). Konfiguration per Annotationen auf der Application:</p>
+  <div class="codebox"><div class="lbl">yaml<button class="cp">Kopieren</button></div><pre><code class="language-yaml">metadata:
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: shop=ghcr.io/nordlicht/shop
+    argocd-image-updater.argoproj.io/shop.update-strategy: semver      # 1.x, oder: digest, latest, name
+    argocd-image-updater.argoproj.io/shop.allow-tags: regexp:^1\.[0-9]+\.[0-9]+$
+    argocd-image-updater.argoproj.io/write-back-method: git             # Commit statt Parameter-Override
+    argocd-image-updater.argoproj.io/git-branch: main</code></pre></div>
+  <div class="co warn"><b>Wann Image Updater, wann Pipeline?</b>Image Updater ist bequem für dev und für Third-Party-Images. Für prod nimmt er Ihnen die Freigabe aus der Hand – „neuestes Semver-Tag" ist keine Deployment-Entscheidung. Prod-Promotion gehört in einen PR, den ein Mensch (oder Kargo mit Regeln) erzeugt.</div>
+
+  <div class="co danger"><b>Anti-Pattern: CI mit Cluster-Zugang</b>Eine Pipeline, die neben dem Commit auch noch <code>kubectl apply</code> oder <code>helm upgrade</code> ausführt, unterläuft GitOps doppelt: Der Cluster hat zwei Schreiber (CI und Argo CD), und die Kubeconfig liegt im CI-System. Beim ersten Self-Heal-Konflikt wundert sich das Team, warum das Deployment „zurückspringt". Ein Schreiber, und der heißt Argo CD.</div>
+
+  <div class="ex"><div class="exh">Die Pipeline ohne kubectl <span class="pill" style="border-color:var(--bloom-3);color:#6EE7B7">L3</span> <span class="pill" style="border-color:var(--bloom-5);color:#FCA5A5">L5</span></div>
+    <ol>
+      <li>Aktivieren Sie in Ihrem Repo unter <em>Settings → Actions → General</em> die Workflow-Berechtigung „Read and write". Starten Sie <code>promote-dev</code> mit Version <code>1.2.0</code>. Verfolgen Sie: Actions-Log → Commit auf <code>main</code> → Argo CD OutOfSync → Auto-Sync → Shop zeigt 1.2.0.</li>
+      <li>Messen Sie die Zeit zwischen Commit und Synced. Woher kommt die Verzögerung? Wie würden Sie sie mit einem Webhook beseitigen (Modul 5)?</li>
+      <li>Erweitern Sie den Workflow so, dass er für <code>prod</code> <em>nicht</em> auf <code>main</code> committet, sondern einen Pull Request öffnet (Tipp: <code>gh pr create</code> mit <code>GH_TOKEN</code>).</li>
+      <li><em>Bewerten:</em> Ihr Team will „grüne Pipeline = läuft in prod" als Aussage. Welche Variante (Pull, Push mit wait, Notification) liefert das ehrlich – und was kostet sie?</li>
+    </ol>
+    <details><summary>Lösungshinweis</summary><div>2: Polling-Intervall (bis 180 s); Webhook auf <code>/api/webhook</code> bringt es auf Sekunden – lokal nicht erreichbar, in echten Setups Pflicht. 3: <code>git checkout -b deploy/prod-1.2.0</code>, Änderung im prod-Overlay, <code>gh pr create --fill --base main</code>; Branch-Protection auf main macht das Review zur Freigabe. 4: Nur Push mit <code>argocd app wait --health</code> gibt der Pipeline ein echtes Ergebnis; Preis: Token, Netzwerkweg, längere Pipeline. Pull + Notification ist billiger, aber die Aussage „grün" endet beim Commit.</div></details>
+  </div>
+</div></section>
+
+<!-- ===================== M11 ===================== -->
+<section class="module" id="m11"><div class="wrap reveal">
+  <div class="mhead"><span class="mnum">Modul 11</span><h2>Sync-Waves, Hooks &amp; Health – Reihenfolge und Migrationen</h2><span class="mtime">60 min</span></div>
+  <div class="bloom"><i class="b1">L1</i><i class="b2">L2</i><i class="b3">L3</i><i class="b4">L4</i><i class="b5">L5</i></div>
+  <p class="lead">Der Shop bekommt eine Datenbank. Vor jedem Deployment muss eine Migration laufen, danach ein Smoketest. Und wenn etwas schiefgeht, soll die Bereitschaft es erfahren. Argo CD kann Reihenfolge – wenn man ihm sagt, welche.</p>
+
+  <h3>Phasen und Waves</h3>
+  <div class="term"><span class="t">Sync-Phasen</span><span class="d">Ein Sync läuft in festen Phasen: <b>PreSync</b> → <b>Sync</b> → <b>PostSync</b>; bei Fehler zusätzlich <b>SyncFail</b>; beim Löschen der App <b>PostDelete</b>. Normale Ressourcen leben in der Sync-Phase.</span><span class="r">Migration = PreSync, Smoketest = PostSync, Alarm = SyncFail. Genau Nordlichts Anforderung.</span></div>
+  <div class="term"><span class="t">Sync-Wave</span><span class="d">Annotation <code>argocd.argoproj.io/sync-wave: "N"</code> (Default 0, negative erlaubt). Innerhalb einer Phase werden Ressourcen Wave für Wave angewendet; die nächste Wave startet erst, wenn alle Ressourcen der vorherigen <em>Healthy</em> sind. Ohne Waves gilt die eingebaute Kind-Reihenfolge (Namespace → CRD → … → Deployment).</span><span class="r">ConfigMap mit Feature-Flags in Wave -1, Datenbank in Wave 0, Shop in Wave 1: Der Shop startet erst, wenn die DB Healthy meldet.</span></div>
+  <div class="term"><span class="t">Hook</span><span class="d">Ressource (meist Job, auch Pod oder Argo Workflow) mit Annotation <code>argocd.argoproj.io/hook: PreSync|Sync|PostSync|SyncFail|PostDelete|Skip</code>. Wird in der Phase ausgeführt, Sync wartet auf Abschluss. <code>hook-delete-policy</code> steuert Aufräumen: <code>HookSucceeded</code>, <code>HookFailed</code>, <code>BeforeHookCreation</code> (Default).</span><span class="r">Ein PreSync-Job, der fehlschlägt, stoppt den ganzen Sync – die Migration schützt das Deployment.</span></div>
+
+  <div class="sim" id="waves"><h4>Sync-Ablauf Schritt für Schritt</h4>
+    <div class="ctr" style="margin-bottom:12px"><button class="btn primary" id="w-run">Sync starten</button><button class="btn danger" id="w-fail">Sync mit Migrations-Fehler</button><button class="btn" id="w-reset">Reset</button><span id="w-status" class="pill na" style="margin-left:auto">bereit</span></div>
+    <div class="lane" data-k="pre"><span class="nm">PreSync · Job</span><div class="bar"><i></i><span>db-migration (hook: PreSync)</span></div></div>
+    <div class="lane" data-k="w-1"><span class="nm">Sync · Wave -1</span><div class="bar"><i></i><span>ConfigMap feature-flags</span></div></div>
+    <div class="lane" data-k="w0"><span class="nm">Sync · Wave 0</span><div class="bar"><i></i><span>ConfigMap html · Service</span></div></div>
+    <div class="lane" data-k="w1"><span class="nm">Sync · Wave 1</span><div class="bar"><i></i><span>Deployment kaffee-shop → wartet auf Healthy</span></div></div>
+    <div class="lane" data-k="post"><span class="nm">PostSync · Job</span><div class="bar"><i></i><span>smoketest (hook: PostSync)</span></div></div>
+    <div class="lane" data-k="fail"><span class="nm">SyncFail · Job</span><div class="bar"><i></i><span>sync-failed-alert (hook: SyncFail)</span></div></div>
+    <div class="lane" data-k="prune"><span class="nm">Prune</span><div class="bar"><i></i><span>Löschungen (PruneLast=true → ganz am Ende)</span></div></div>
+  </div>
+
+  <div class="codebox"><div class="tabs"><button class="on" data-t="pre">PreSync-Migration</button><button data-t="post">PostSync-Smoketest</button><button data-t="wave">Wave-Annotation</button></div>
+    <div class="tabpane on" data-p="pre"><pre><code class="language-yaml">apiVersion: batch/v1
+kind: Job
+metadata:
+  name: db-migration
+  annotations:
+    argocd.argoproj.io/hook: PreSync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation   # alten Job vor neuem Lauf löschen
+spec:
+  backoffLimit: 1
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: migrate
+          image: busybox:1.36
+          command: ["sh","-c","echo 'Migration bestellungen v2'; sleep 8"]</code></pre></div>
+    <div class="tabpane" data-p="post"><pre><code class="language-yaml">apiVersion: batch/v1
+kind: Job
+metadata:
+  name: smoketest
+  annotations:
+    argocd.argoproj.io/hook: PostSync
+    argocd.argoproj.io/hook-delete-policy: HookSucceeded        # bei Fehler stehen lassen -> Logs lesen
+spec:
+  backoffLimit: 0
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: curl
+          image: curlimages/curl:8.10.1
+          command: ["sh","-c","curl -fsS http://kaffee-shop.shop-hooks.svc/ | grep -q Nordlicht"]</code></pre></div>
+    <div class="tabpane" data-p="wave"><pre><code class="language-yaml">apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: feature-flags
+  annotations:
+    argocd.argoproj.io/sync-wave: "-1"
+# Deployment: sync-wave "1"  -> startet erst, wenn Wave 0 Healthy ist
+# Zwischen Waves wartet Argo CD zusätzlich ARGOCD_SYNC_WAVE_DELAY (Default 2s)</code></pre></div>
+  </div>
+  <p>Legen Sie eine Application <code>shop-hooks</code> auf Pfad <code>hooks/</code> (Namespace <code>shop-hooks</code>, Projekt nordlicht – Destinations passen: <code>shop-*</code>) an und synchronisieren Sie. Beobachten Sie in der UI die Phasen: Die Jobs erscheinen als Hook-Knoten mit eigenem Symbol; „SYNC STATUS“ zeigt die Phasen-Zeitleiste.</p>
+
+  <h3>Health: Woher weiß Argo CD, dass etwas läuft?</h3>
+  <p>Eingebaute Health-Checks für Deployment, StatefulSet, DaemonSet, ReplicaSet, Pod, Job, Service (LoadBalancer), Ingress, PVC, Argo Rollouts, Cert-Manager u. a. Für eigene CRDs: Lua-Skript in <code>argocd-cm</code>.</p>
+  <div class="codebox"><div class="lbl">yaml · argocd-cm<button class="cp">Kopieren</button></div><pre><code class="language-yaml">data:
+  resource.customizations.health.nordlicht.io_Roastery: |
+    hs = {}
+    if obj.status ~= nil and obj.status.phase == "Ready" then
+      hs.status = "Healthy"; hs.message = "Rösterei läuft"
+    elseif obj.status ~= nil and obj.status.phase == "Failed" then
+      hs.status = "Degraded"; hs.message = obj.status.reason
+    else
+      hs.status = "Progressing"; hs.message = "warte auf Rösterei"
+    end
+    return hs</code></pre></div>
+  <div class="co info"><b>Application-Health ist die schlechteste Kind-Health</b>Ein einziges Degraded-Objekt macht die ganze App Degraded. Ab Argo CD 3.0 tragen Kind-Applications (App of Apps) standardmäßig <em>nicht mehr</em> zur Health der Eltern-App bei – wer das alte Verhalten will, setzt <code>resource.customizations.health.argoproj.io_Application</code>. Trainer-Hinweis: In 2.x war das umgekehrt.</div>
+
+  <h3>Diff-Feinheiten: ignoreDifferences &amp; Resource Tracking</h3>
+  <div class="codebox"><div class="lbl">yaml · Application<button class="cp">Kopieren</button></div><pre><code class="language-yaml">spec:
+  ignoreDifferences:
+    - group: apps
+      kind: Deployment
+      jsonPointers: [ /spec/replicas ]                    # HPA verwaltet Replicas
+    - group: admissionregistration.k8s.io
+      kind: MutatingWebhookConfiguration
+      jqPathExpressions: [ '.webhooks[].clientConfig.caBundle' ]   # cert-manager injiziert
+    - kind: Secret
+      managedFieldsManagers: [ external-secrets ]        # alles, was dieser Manager schreibt
+  syncPolicy:
+    syncOptions: [ RespectIgnoreDifferences=true ]</code></pre></div>
+  <div class="term"><span class="t">Resource Tracking</span><span class="d">Wie Argo CD weiß, welche Ressource zu welcher App gehört: per Label <code>app.kubernetes.io/instance</code> (legacy Default) oder per Annotation <code>argocd.argoproj.io/tracking-id</code> (<code>annotation</code>, Default seit 3.0, empfohlen).</span><span class="r">Das Label kollidiert mit Helm-Charts, die dasselbe Label anders setzen – dann „gehören“ Objekte plötzlich der falschen App. Einstellung: <code>application.resourceTrackingMethod</code> in <code>argocd-cm</code>.</span></div>
+  <div class="term"><span class="t">Sync-Options-Annotation</span><span class="d"><code>argocd.argoproj.io/sync-options: Prune=false,Delete=false</code> auf einer einzelnen Ressource, <code>argocd.argoproj.io/compare-options: IgnoreExtraneous</code> um Objekte vom Diff auszunehmen.</span><span class="r">Eine PVC mit Bestelldaten darf nie durch Prune sterben. Diese Annotation ist Ihre Versicherung.</span></div>
+
+  <div class="co danger"><b>Anti-Pattern: Job ohne Hook-Annotation in Git</b>Ein normaler Job als Ressource ist nach Abschluss „Completed“ – beim nächsten Sync will Argo CD ihn erneut anwenden, die Spec ist immutable → Sync-Fehler oder ewiges OutOfSync. Jobs, die pro Deployment laufen sollen, sind Hooks. Jobs, die einmalig laufen sollen, gehören nicht in ein Deployment-Repo (Operator, CronJob oder Hook mit <code>Skip</code>).</div>
+
+  <div class="ex"><div class="exh">Migration, die scheitert <span class="pill" style="border-color:var(--bloom-3);color:#6EE7B7">L3</span> <span class="pill" style="border-color:var(--bloom-4);color:var(--accent-soft)">L4</span> <span class="pill" style="border-color:var(--bloom-5);color:#FCA5A5">L5</span></div>
+    <ol>
+      <li>Ändern Sie im PreSync-Job das Kommando auf <code>exit 1</code>. Pushen, syncen. Was passiert mit dem Deployment? Läuft der SyncFail-Hook? Wo sehen Sie die Job-Logs in der UI?</li>
+      <li>Setzen Sie die Wave des Deployments auf <code>"1"</code> und des Services auf <code>"2"</code>. Beobachten Sie mit <code>kubectl -n shop-hooks get all -w</code>, wann was entsteht.</li>
+      <li>Fügen Sie einen HPA (<code>kubectl autoscale</code> ist Drift – schreiben Sie ihn als YAML ins Repo) mit minReplicas 2 hinzu. Aktivieren Sie Self-Heal. Beobachten Sie das Flapping, lösen Sie es mit <code>ignoreDifferences</code>.</li>
+      <li><em>Bewerten:</em> Sollte eine DB-Migration wirklich ein Argo CD-Hook sein, oder gehört sie in die Anwendung (Init-Container/Startup)? Zwei Argumente je Seite.</li>
+    </ol>
+    <details><summary>Lösungshinweis</summary><div>1: Deployment wird nicht angefasst (Sync bricht in PreSync ab, Status „Failed“), SyncFail-Job läuft, Logs über Knoten-Kontextmenü → Logs. 3: Bis Argo CD und HPA sich abwechseln, sehen Sie <code>get deploy -w</code> zwischen 1 und 2 springen; nach <code>ignoreDifferences</code> + <code>RespectIgnoreDifferences</code> ruht es. 4: Hook: zentral, sichtbar, blockiert Rollout, funktioniert für alle Sprachen; Anwendung: läuft auch bei <code>kubectl apply</code>/lokal, Migrations-Tool kennt Schema-Version, keine Race Conditions bei mehreren Replicas – typisch: Job als Hook, aber die Logik in der App-Image (<code>app migrate</code>).</div></details>
+  </div>
+</div></section>
+
+<!-- ===================== M12 ===================== -->
+<section class="module" id="m12"><div class="wrap reveal">
+  <div class="mhead"><span class="mnum">Modul 12</span><h2>Secrets &amp; Sicherheit – Passwörter in Git, ohne Passwörter in Git</h2><span class="mtime">45 min</span></div>
+  <div class="bloom"><i class="b1">L1</i><i class="b2">L2</i><i class="b3">L3</i><i class="b4">L4</i><i class="b5">L5</i></div>
+  <p class="lead">Die Datenbank braucht ein Passwort. GitOps sagt: alles in Git. Sicherheit sagt: niemals. Beide haben recht – und Argo CD löst es ausdrücklich <em>nicht</em> selbst.</p>
+
+  <div class="co danger"><b>Anti-Pattern: base64 ist keine Verschlüsselung</b>Ein Kubernetes-<code>Secret</code> mit <code>data:</code> im Repo ist Klartext mit Umweg. Jeder mit Repo-Zugriff hat das Passwort, für immer, in der Historie. Auch „Private Repo“ ändert das nicht.</div>
+
+  <h3>Die drei Muster</h3>
+  <table>
+    <tr><th>Muster</th><th>Wie</th><th>Pro</th><th>Contra</th></tr>
+    <tr><td><b>Sealed Secrets</b> (Bitnami)</td><td>Controller im Cluster hat privaten Schlüssel; Sie verschlüsseln lokal mit <code>kubeseal</code> → <code>SealedSecret</code>-CRD in Git; Controller entschlüsselt zu Secret.</td><td>Einfach, kein externer Dienst, echtes GitOps</td><td>Schlüssel pro Cluster (Cluster-Neuaufbau = Backup nötig), Rotation umständlich</td></tr>
+    <tr><td><b>External Secrets Operator</b> (ESO)</td><td>In Git steht nur ein <code>ExternalSecret</code> (Referenz); Operator holt Wert aus Vault, AWS/Azure/GCP Secret Manager, 1Password …</td><td>Rotation zentral, Audit im Vault, Cluster-unabhängig</td><td>Externer Dienst nötig; Secret-Wert kurz im Operator</td></tr>
+    <tr><td><b>SOPS + age/KMS</b></td><td>YAML-Werte verschlüsselt im Repo; Entschlüsselung beim Rendern (Argo CD: CMP-Plugin/KSOPS oder Helm-Secrets)</td><td>Diff-freundlich, Schlüssel in KMS</td><td>Argo CD braucht Plugin + Schlüsselzugang – Repo-Server wird sensibel</td></tr>
+  </table>
+  <div class="term"><span class="t">Config Management Plugin (CMP)</span><span class="d">Sidecar-Container im Repo-Server, der ein eigenes Render-Tool ausführt (z. B. KSOPS, cdk8s). Konfiguration per <code>plugin.yaml</code> mit <code>discover</code> und <code>generate</code>.</span><span class="r">Der Weg, wenn weder Kustomize noch Helm reichen – und der Grund, warum der Repo-Server das sicherheitskritischste Bauteil ist: Er führt fremden Code aus.</span></div>
+
+  <h3>Hands-on: Sealed Secrets – natürlich per Argo CD installiert</h3>
+  <div class="codebox"><div class="lbl">yaml · Application<button class="cp">Kopieren</button></div><pre><code class="language-yaml">apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata: { name: sealed-secrets, namespace: argocd }
+spec:
+  project: default
+  source:
+    repoURL: https://bitnami-labs.github.io/sealed-secrets
+    chart: sealed-secrets
+    targetRevision: 2.*                       # Trainer: aktuelle Version prüfen
+    helm: { releaseName: sealed-secrets }
+  destination: { server: https://kubernetes.default.svc, namespace: kube-system }
+  syncPolicy: { automated: { prune: true, selfHeal: true } }</code></pre></div>
+  <div class="codebox"><div class="lbl">PowerShell<button class="cp">Kopieren</button></div><pre><code class="language-powershell">winget install -e --id Bitnami.kubeseal        # oder Binary von GitHub
+kubeseal --controller-name sealed-secrets --controller-namespace kube-system --fetch-cert > pub-cert.pem
+kubectl create secret generic shop-db -n shop-dev --dry-run=client --from-literal=password='K4ffee!' -o yaml |
+  kubeseal --cert pub-cert.pem -o yaml > secrets-demo/shop-db.sealed.yaml
+Get-Content secrets-demo/shop-db.sealed.yaml    # encryptedData: nur Chiffrat -> darf in Git
+git add secrets-demo ; git commit -m "DB-Secret versiegelt" ; git push</code></pre></div>
+  <p>Legen Sie <code>secrets-demo/</code> als Application (Namespace shop-dev) an und syncen Sie: Argo CD deployt das <code>SealedSecret</code>, der Controller erzeugt das echte <code>Secret</code>. In der UI erscheinen beide – das Secret als Kind des SealedSecrets.</p>
+
+  <h3>Argo CD selbst absichern – Checkliste</h3>
+  <ul class="tl">
+    <li><b>Zugang</b> TLS am Ingress, <code>server.insecure</code> nur hinter TLS-terminierendem Proxy; SSO statt admin; <code>admin.enabled: "false"</code>; API-Tokens mit Ablauf.</li>
+    <li><b>RBAC</b> <code>policy.default: role:readonly</code> oder leer; Projekte mit engen <code>sourceRepos</code>/<code>destinations</code>; <code>exec</code> nur in dev.</li>
+    <li><b>Repos</b> GitHub App oder Deploy Keys statt Personen-PATs; Signaturprüfung (<code>signatureKeys</code> im Projekt) für prod; Branch-Protection im Git ist Teil der Sicherheitsarchitektur.</li>
+    <li><b>Repo-Server</b> keine CMP-Plugins mit Cluster-Zugriff; <code>reposerver.allow.oob.symlinks=false</code>; Ressourcen-Limits; Helm-Werte niemals mit Secrets.</li>
+    <li><b>Cluster</b> ServiceAccount mit minimalen Rechten statt cluster-admin; <code>namespace-install</code> wo möglich.</li>
+    <li><b>Secrets in der UI</b> Werte werden maskiert (<code>++++</code>), Diff zeigt keine Klartexte – aber wer <code>get</code> auf die Ressource darf, sieht in <code>kubectl</code> alles.</li>
+    <li><b>Updates</b> Argo CD-Releases zeitnah einspielen; CVE-Feed abonnieren; <code>argocd version</code> in der Inventur.</li>
+  </ul>
+
+  <div class="ex"><div class="exh">Secret-Strategie für Nordlicht <span class="pill" style="border-color:var(--bloom-3);color:#6EE7B7">L3</span> <span class="pill" style="border-color:var(--bloom-5);color:#FCA5A5">L5</span></div>
+    <ol>
+      <li>Führen Sie das Sealed-Secrets-Hands-on durch. Mounten Sie das Secret als Env-Var <code>DB_PASSWORD</code> in das Shop-Deployment (dev) und prüfen Sie mit <code>kubectl exec … -- env</code>.</li>
+      <li>Löschen Sie das echte <code>Secret</code> per kubectl. Wer stellt es wieder her – Argo CD oder der Sealed-Secrets-Controller? Beobachten Sie.</li>
+      <li>Versiegeln Sie dasselbe Secret erneut. Warum unterscheidet sich das Chiffrat? Was bedeutet das für <code>git diff</code>?</li>
+      <li><em>Bewerten:</em> Nordlicht Kaffee hat keinen Vault, aber Azure. Empfehlen Sie ein Muster und begründen Sie in drei Sätzen.</li>
+    </ol>
+    <details><summary>Lösungshinweis</summary><div>2: Der Sealed-Secrets-Controller (Owner-Reference); Argo CD sieht das Secret nur als Kind. 3: Zufälliges Session-Key/Nonce pro Verschlüsselung – jedes Versiegeln ergibt ein neues Chiffrat; <code>git diff</code> zeigt Änderung, auch wenn der Wert gleich blieb. 4: ESO mit Azure Key Vault: zentrale Rotation, Workload Identity statt Schlüssel im Cluster, Cluster-Neuaufbau ohne Schlüssel-Backup; Sealed Secrets nur für Bootstrap-Secrets (z. B. die Vault-Credentials selbst).</div></details>
+  </div>
+</div></section>
+
+<!-- ===================== M13 Scripting ===================== -->
+<section class="module" id="m13"><div class="wrap reveal">
+  <div class="mhead"><span class="mnum">Modul 13</span><h2>Scripting &amp; API – Argo CD automatisieren</h2><span class="mtime">60 min</span></div>
+  <div class="bloom"><i class="b1">L1</i><i class="b2">L2</i><i class="b3">L3</i><i class="b4">L4</i><i class="b6">L6</i></div>
+  <p class="lead">Klicken skaliert nicht. Sobald Nordlicht Kaffee 40 Applications hat, braucht das Team Skripte: Drift-Report am Morgen, Massen-Refresh nach dem Repo-Umzug, „warte bis Healthy" in der Pipeline. CLI und REST-API liefern alles dafür – in JSON.</p>
+
+  <div class="story"><b>Auftrag.</b> Jeden Morgen um 7 soll eine Übersicht in den Team-Chat: Welche Apps sind OutOfSync, welche Degraded, seit wann. Und wenn ein Sync in prod scheitert, soll das Skript abbrechen – nicht einfach weiterlaufen.</div>
+
+  <h3>Die CLI als Datenquelle</h3>
+  <p>Fast jeder <code>argocd</code>-Befehl kennt <code>-o json</code>, <code>-o yaml</code>, <code>-o name</code>, <code>-o wide</code>. JSON plus <code>ConvertFrom-Json</code> macht PowerShell zum Argo CD-Client:</p>
+  <div class="codebox"><div class="lbl">PowerShell<button class="cp">Kopieren</button></div><pre><code class="language-powershell"># Alle Apps als Objekte
+$apps = argocd app list -o json | ConvertFrom-Json
+
+# Filtern, projizieren, sortieren - ganz normales PowerShell
+$apps | Where-Object { $_.status.sync.status -ne 'Synced' } |
+  Select-Object @{n='App';e={$_.metadata.name}},
+                @{n='Sync';e={$_.status.sync.status}},
+                @{n='Health';e={$_.status.health.status}},
+                @{n='Revision';e={$_.status.sync.revision.Substring(0,7)}} |
+  Format-Table
+
+# Serverseitig filtern spart Zeit bei vielen Apps
+argocd app list --project nordlicht --selector env=prod -o name
+argocd app list --output json | ConvertFrom-Json | Measure-Object | Select-Object Count</code></pre></div>
+
+  <div class="sim"><h4>JSON-Explorer: <code>argocd app get shop-dev -o json</code></h4>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px" id="jx">
+      <div><div style="font-size:.78rem;color:var(--text-muted);margin-bottom:6px">Klicken Sie ein Feld – rechts erscheint der PowerShell-Pfad.</div><div id="jx-tree" style="font-family:'JetBrains Mono';font-size:.76rem;line-height:1.75;background:#0b0d10;border:1px solid var(--border);border-radius:10px;padding:10px 14px;max-height:340px;overflow:auto"></div></div>
+      <div><div style="font-size:.78rem;color:var(--text-muted);margin-bottom:6px">Zugriff</div><div id="jx-out" style="font-family:'JetBrains Mono';font-size:.8rem;background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:14px;min-height:120px;white-space:pre-wrap;color:var(--accent-soft)">$app = argocd app get shop-dev -o json | ConvertFrom-Json</div>
+        <div style="font-size:.8rem;color:var(--text-muted);margin-top:10px" id="jx-hint">Die wichtigsten Felder für Skripte: <code>status.sync.status</code>, <code>status.health.status</code>, <code>status.operationState.phase</code>, <code>status.sync.revision</code>, <code>status.conditions[]</code>.</div></div>
+    </div>
+  </div>
+
+  <h3>Skripte, die man wirklich braucht</h3>
+  <div class="codebox"><div class="tabs"><button class="on" data-t="drift">drift-report.ps1</button><button data-t="wait">sync-and-wait.ps1</button><button data-t="mass">mass-refresh.ps1</button></div>
+    <div class="tabpane on" data-p="drift"><pre><code class="language-powershell"># Drift-Report: OutOfSync/Degraded-Apps inkl. Dauer, Exit-Code 1 wenn etwas rot ist
+$ErrorActionPreference = "Continue"
+$apps = argocd app list -o json | ConvertFrom-Json
+if ($LASTEXITCODE -ne 0) { Write-Error "argocd app list fehlgeschlagen - Login?"; exit 2 }
+
+$problems = foreach ($a in $apps) {
+  $sync = $a.status.sync.status; $health = $a.status.health.status
+  if ($sync -eq 'Synced' -and $health -eq 'Healthy') { continue }
+  $since = if ($a.status.operationState.finishedAt) {
+             [math]::Round(((Get-Date) - [datetime]$a.status.operationState.finishedAt).TotalMinutes) } else { '?' }
+  [pscustomobject]@{ App=$a.metadata.name; Project=$a.spec.project; Sync=$sync; Health=$health; MinutenSeitLetztemSync=$since;
+                     Fehler=($a.status.conditions | ForEach-Object message) -join '; ' }
+}
+if (-not $problems) { Write-Host "Alle Apps Synced/Healthy" -ForegroundColor Green; exit 0 }
+$problems | Sort-Object Health, Sync | Format-Table -AutoSize
+# Optional: an Telegram/Teams senden
+# Invoke-RestMethod -Method Post -Uri $env:CHAT_WEBHOOK -Body (@{text=($problems|Out-String)}|ConvertTo-Json) -ContentType 'application/json'
+exit 1</code></pre></div>
+    <div class="tabpane" data-p="wait"><pre><code class="language-powershell"># Sync ausloesen und auf Healthy warten - mit Timeout und sauberem Exit-Code
+param([Parameter(Mandatory)][string]$App, [int]$TimeoutSec = 300)
+$ErrorActionPreference = "Continue"
+
+argocd app sync $App --prune --timeout 120
+if ($LASTEXITCODE -ne 0) { Write-Host "Sync von $App fehlgeschlagen" -ForegroundColor Red; argocd app get $App --show-operation; exit 1 }
+
+# argocd app wait kann das eingebaut - aber so sieht man, was es tut:
+$deadline = (Get-Date).AddSeconds($TimeoutSec)
+do {
+  $a = argocd app get $App -o json | ConvertFrom-Json
+  $h = $a.status.health.status; $s = $a.status.sync.status
+  Write-Host ("{0:HH:mm:ss}  sync={1}  health={2}" -f (Get-Date), $s, $h)
+  if ($s -eq 'Synced' -and $h -eq 'Healthy')  { exit 0 }
+  if ($h -eq 'Degraded') { Write-Host "Degraded - Abbruch" -ForegroundColor Red; exit 1 }
+  Start-Sleep 5
+} while ((Get-Date) -lt $deadline)
+Write-Host "Timeout nach $TimeoutSec s" -ForegroundColor Red; exit 3
+
+# Kurzform fuer Pipelines:
+# argocd app wait $App --sync --health --timeout 300</code></pre></div>
+    <div class="tabpane" data-p="mass"><pre><code class="language-powershell"># Repo-URL fuer alle Apps eines Projekts umstellen (z.B. nach GitHub-Org-Umzug)
+param([string]$Project = 'nordlicht', [string]$Old = 'github.com/alt', [string]$New = 'github.com/neu')
+$ErrorActionPreference = "Continue"
+$apps = argocd app list --project $Project -o json | ConvertFrom-Json
+foreach ($a in $apps) {
+  $url = $a.spec.source.repoURL
+  if ($url -notlike "*$Old*") { continue }
+  $newUrl = $url.Replace($Old, $New)
+  Write-Host "$($a.metadata.name): $url -> $newUrl"
+  # Nur wenn die Apps NICHT aus Git (App of Apps/AppSet) kommen! Sonst dort aendern.
+  argocd app set $a.metadata.name --repo $newUrl
+  if ($LASTEXITCODE -ne 0) { Write-Warning "  fehlgeschlagen"; continue }
+  argocd app get $a.metadata.name --hard-refresh | Out-Null
+}</code></pre></div>
+  </div>
+  <div class="co danger"><b>Anti-Pattern: Skripte, die Applications anlegen oder ändern</b><code>argocd app create</code> in einem Skript erzeugt Zustand, der nur im Cluster existiert. Nach einem Disaster Recovery ist er weg. Skripte sind für <em>Betrieb</em> (Report, Refresh, Warten, Notfall-Fix), nicht für Konfiguration – die gehört in Git (App of Apps, ApplicationSet). Das <code>mass-refresh</code>-Beispiel oben ist genau deshalb mit Warnung versehen.</div>
+
+  <h3>Authentifizierung für Skripte</h3>
+  <table>
+    <tr><th>Variante</th><th>Wie</th><th>Wann</th></tr>
+    <tr><td>Session aus <code>argocd login</code></td><td>Token in <code>~/.config/argocd/config</code>, läuft nach 24 h ab</td><td>interaktiv auf dem eigenen Rechner</td></tr>
+    <tr><td>Account-Token</td><td><code>argocd account generate-token --account ci-bot</code>; Account braucht <code>apiKey</code>-Capability in <code>argocd-cm</code></td><td>Automatisierung mit Rechten eines Accounts</td></tr>
+    <tr><td>Projektrollen-Token</td><td><code>argocd proj role create-token &lt;proj&gt; &lt;role&gt;</code></td><td>CI, eng begrenzt auf ein Projekt (empfohlen)</td></tr>
+    <tr><td><code>--core</code>-Modus</td><td>CLI spricht direkt mit der Kubernetes-API (kubectl-Kontext), kein Server nötig</td><td>Cluster-Admins, Core-Installation</td></tr>
+  </table>
+  <div class="codebox"><div class="lbl">PowerShell · Umgebungsvariablen statt Login<button class="cp">Kopieren</button></div><pre><code class="language-powershell">$env:ARGOCD_SERVER     = "localhost:8080"
+$env:ARGOCD_AUTH_TOKEN = Get-Content .\ci-token.txt        # nie ins Repo!
+$env:ARGOCD_OPTS       = "--plaintext --grpc-web"          # hinter Ingress/Proxy: --grpc-web
+argocd app list                                            # kein login noetig</code></pre></div>
+
+  <h3>Die REST-API direkt</h3>
+  <p>Die CLI ist nur ein Client der API. Swagger-UI: <a href="http://localhost:8080/swagger-ui" target="_blank">localhost:8080/swagger-ui</a>. Für Skripte ohne <code>argocd.exe</code> (z. B. Azure Automation, Power Automate) oder für Felder, die die CLI nicht anzeigt:</p>
+  <div class="codebox"><div class="lbl">PowerShell · REST<button class="cp">Kopieren</button></div><pre><code class="language-powershell">$base = "http://localhost:8080/api/v1"
+$hdr  = @{ Authorization = "Bearer $env:ARGOCD_AUTH_TOKEN" }
+
+# Session-Token aus Username/Passwort holen (Alternative zum Account-Token)
+# $hdr = @{ Authorization = "Bearer " + (Invoke-RestMethod -Method Post -Uri "$base/session" -Body (@{username='admin';password='...'}|ConvertTo-Json) -ContentType 'application/json').token }
+
+# Liste
+(Invoke-RestMethod -Uri "$base/applications" -Headers $hdr).items | Select-Object -Expand metadata | Select-Object name
+
+# Eine App inkl. Ressourcenbaum
+Invoke-RestMethod -Uri "$base/applications/shop-dev" -Headers $hdr | Select-Object -Expand status
+Invoke-RestMethod -Uri "$base/applications/shop-dev/resource-tree" -Headers $hdr | Select-Object -Expand nodes | Select-Object kind, name, health
+
+# Sync ausloesen (Body: prune, dryRun, revision, resources[] fuer selektiven Sync)
+Invoke-RestMethod -Method Post -Uri "$base/applications/shop-dev/sync" -Headers $hdr -ContentType 'application/json' -Body '{"prune":true}'
+
+# Diff-relevante Rohdaten: gerenderte Manifeste
+(Invoke-RestMethod -Uri "$base/applications/shop-dev/manifests" -Headers $hdr).manifests | ForEach-Object { $_ | ConvertFrom-Json } | Select-Object kind, @{n='name';e={$_.metadata.name}}</code></pre></div>
+  <div class="term"><span class="t">gRPC-Web</span><span class="d">Die CLI spricht standardmäßig gRPC. Hinter Ingress-Controllern oder Proxys, die kein gRPC durchlassen, hilft <code>--grpc-web</code> (gRPC über normales HTTP/1.1).</span><span class="r">„<code>argocd login</code> hängt / EOF" hinter dem Firmen-Ingress ist fast immer dieser Schalter. In Pipelines gleich mit <code>ARGOCD_OPTS</code> setzen.</span></div>
+
+  <h3><code>argocd admin</code> – Werkzeuge für Betreiber</h3>
+  <table>
+    <tr><th>Befehl</th><th>Zweck</th></tr>
+    <tr><td><code>argocd admin export</code> / <code>import</code></td><td>Alle Apps, Projekte, Repos, Settings als YAML sichern und wiederherstellen (Backup!)</td></tr>
+    <tr><td><code>argocd admin settings validate</code></td><td>ConfigMaps auf Fehler prüfen, bevor man sie anwendet</td></tr>
+    <tr><td><code>argocd admin settings rbac can &lt;user&gt; &lt;action&gt; &lt;resource&gt; &lt;object&gt;</code></td><td>RBAC-Policy testen ohne Login (Modul 8)</td></tr>
+    <tr><td><code>argocd admin app generate-spec</code></td><td>Application-YAML aus CLI-Flags erzeugen – Brücke von imperativ zu deklarativ</td></tr>
+    <tr><td><code>argocd admin app diff-reconcile-results</code></td><td>Vor einem Argo CD-Upgrade prüfen, ob sich Diff-Ergebnisse ändern würden</td></tr>
+    <tr><td><code>argocd admin cluster stats / shards</code></td><td>Cluster-Verteilung auf Controller-Shards (Modul 14, Performance)</td></tr>
+  </table>
+
+  <div class="ex"><div class="exh">Der Morgen-Report <span class="pill" style="border-color:var(--bloom-3);color:#6EE7B7">L3</span> <span class="pill" style="border-color:var(--bloom-6);color:#F9A8D4">L6</span></div>
+    <ol>
+      <li>Legen Sie den Account <code>reporter</code> mit Capability <code>apiKey</code> an (nur, kein <code>login</code>), geben Sie ihm global <code>applications, get, */*</code> und erzeugen Sie ein Token. Setzen Sie <code>ARGOCD_AUTH_TOKEN</code> und prüfen Sie, dass <code>argocd app sync</code> damit <em>verweigert</em> wird.</li>
+      <li>Führen Sie <code>drift-report.ps1</code> aus, nachdem Sie in shop-prod Drift erzeugt haben. Erweitern Sie es um die Spalte „Commit-Autor" (Tipp: <code>argocd app get -o json</code> hat <code>status.history[-1]</code> mit Revision; Autor holen Sie mit <code>git log -1 --format=%an &lt;sha&gt;</code> im geklonten Repo).</li>
+      <li>Bauen Sie <code>sync-and-wait.ps1</code> so um, dass es mehrere Apps in der Reihenfolge dev → staging → prod verarbeitet und beim ersten Fehler stoppt.</li>
+      <li><em>Erschaffen:</em> Schreiben Sie ein Skript, das aus der REST-API für jede App die Zeit seit dem letzten erfolgreichen Sync ermittelt und Apps ohne Sync seit 30 Tagen als „vermutlich verwaist" meldet.</li>
+    </ol>
+    <details><summary>Lösungshinweis</summary><div>1: <code>accounts.reporter: apiKey</code> in <code>argocd-cm</code>; Policy in <code>argocd-rbac-cm</code>: <code>p, reporter, applications, get, */*, allow</code>; Sync ergibt „permission denied". 3: Array <code>@('shop-dev','shop-staging','shop-prod')</code>, foreach mit <code>if ($LASTEXITCODE -ne 0) { exit 1 }</code> nach jedem Aufruf des vorhandenen Skripts (<code>&amp; .\sync-and-wait.ps1 -App $_</code>). 4: <code>status.operationState.finishedAt</code> plus <code>phase -eq 'Succeeded'</code>; <code>[datetime]::Parse</code> und <code>(Get-Date) - $t</code>.</div></details>
+  </div>
+</div></section>
+
+<!-- ===================== M14 ===================== -->
+<section class="module" id="m14"><div class="wrap reveal">
+  <div class="mhead"><span class="mnum">Modul 14</span><h2>Betrieb: Rollback, Notifications, Monitoring, Troubleshooting</h2><span class="mtime">90 min</span></div>
+  <div class="bloom"><i class="b1">L1</i><i class="b2">L2</i><i class="b3">L3</i><i class="b4">L4</i><i class="b5">L5</i></div>
+  <p class="lead">Es ist 3 Uhr nachts, der Shop ist Degraded. Das Team von Nordlicht Kaffee hat jetzt ein Werkzeug – und muss wissen, welchen Knopf es <em>nicht</em> drückt.</p>
+
+  <h3>Status lesen: die Matrix</h3>
+  <div class="matrix">
+    <div class="h"></div><div class="h">Healthy</div><div class="h">Progressing</div><div class="h">Degraded</div>
+    <div class="h" style="text-align:right">Synced</div>
+    <div class="g"><b>Alles gut</b>Git = Cluster, läuft.</div>
+    <div class="y"><b>Rollout läuft</b>Warten; bei &gt; 10 min: Pods prüfen (Image-Pull, Probes).</div>
+    <div class="r"><b>Git ist kaputt</b>Korrekt angewendet, aber der Commit ist fehlerhaft. → Revert in Git, nicht Rollback in UI.</div>
+    <div class="h" style="text-align:right">OutOfSync</div>
+    <div class="y"><b>Änderung wartet</b>Neuer Commit oder Drift. Diff ansehen, dann Sync oder Drift beheben.</div>
+    <div class="y"><b>Sync unterwegs</b>Auto-Sync gerade aktiv oder Hook läuft.</div>
+    <div class="r"><b>Drift + Fehler</b>Jemand hat im Cluster gebastelt und es ist kaputt. Sync = Git-Stand wiederherstellen (wenn Git gesund).</div>
+    <div class="h" style="text-align:right">Unknown</div>
+    <div class="r" style="grid-column:span 3"><b>Argo CD kann nicht vergleichen</b>Repo unerreichbar, Render-Fehler, Cluster nicht erreichbar, Projekt verbietet Destination. → rotes Banner in der App lesen, dann <code>argocd app get</code> und Repo-Server-/Controller-Logs.</div>
+  </div>
+
+  <h3>Rollback – zwei Wege, einer ist richtig</h3>
+  <div class="path"><span class="ui">App</span><em>›</em><span class="ui">HISTORY AND ROLLBACK</span><em>›</em><span>Revision wählen</span><em>›</em><span>⋮ › Rollback</span></div>
+  <div class="co warn"><b>UI-Rollback deaktiviert Auto-Sync</b>Ein Rollback über die UI/CLI (<code>argocd app rollback</code>) synchronisiert auf einen alten Commit und schaltet dabei Auto-Sync <em>ab</em> – sonst würde Argo CD sofort wieder auf HEAD ziehen. Git und Cluster sind jetzt absichtlich verschieden. Das ist ein Notfall-Werkzeug für Minuten, nicht der Prozess. Der Prozess ist <code>git revert</code> + Push: Git bleibt Single Source of Truth, Auto-Sync bleibt an, Audit bleibt vollständig.</div>
+  <div class="codebox"><div class="lbl">PowerShell<button class="cp">Kopieren</button></div><pre><code class="language-powershell">argocd app history shop-prod
+argocd app rollback shop-prod 3            # ID aus history; Auto-Sync wird deaktiviert
+# der richtige Weg:
+git revert HEAD ; git push                  # -> Argo CD synct den Revert wie jeden Commit</code></pre></div>
+
+  <h3>Notifications</h3>
+  <p>Der Notifications-Controller sendet bei <em>Triggern</em> (Bedingungen auf dem App-Status) <em>Templates</em> an <em>Services</em> (Slack, Teams, Mail, Webhook, GitHub-Commit-Status …). Konfiguration in <code>argocd-notifications-cm</code>, Secrets in <code>argocd-notifications-secret</code>, Zuordnung per Annotation auf der App.</p>
+  <div class="codebox"><div class="tabs"><button class="on" data-t="cm">argocd-notifications-cm</button><button data-t="an">Annotation auf der App</button></div>
+    <div class="tabpane on" data-p="cm"><pre><code class="language-yaml">data:
+  service.webhook.telegram: |
+    url: https://api.telegram.org/bot$telegram-token/sendMessage
+    headers: [ { name: Content-Type, value: application/json } ]
+  template.app-sync-failed: |
+    webhook:
+      telegram:
+        method: POST
+        body: |
+          { "chat_id": "$telegram-chat", "text": "❌ {{.app.metadata.name}} Sync fehlgeschlagen: {{.app.status.operationState.message}}" }
+  trigger.on-sync-failed: |
+    - when: app.status.operationState.phase in ['Error', 'Failed']
+      send: [ app-sync-failed ]
+  trigger.on-health-degraded: |
+    - when: app.status.health.status == 'Degraded'
+      send: [ app-sync-failed ]
+  # Mitgeliefert: on-deployed, on-sync-succeeded, on-sync-running, on-sync-status-unknown</code></pre></div>
+    <div class="tabpane" data-p="an"><pre><code class="language-yaml">metadata:
+  annotations:
+    notifications.argoproj.io/subscribe.on-sync-failed.telegram: ""
+    notifications.argoproj.io/subscribe.on-health-degraded.telegram: ""
+    # Slack: notifications.argoproj.io/subscribe.on-deployed.slack: nordlicht-deploys</code></pre></div>
+  </div>
+  <div class="path"><span class="ui">App</span><em>›</em><span class="ui">APP DETAILS</span><em>›</em><span>Summary › NOTIFICATION SUBSCRIPTIONS</span><em>›</em><span>Trigger + Service wählen</span></div>
+
+  <h3>Troubleshooting-Handbuch</h3>
+  <table>
+    <tr><th>Symptom</th><th>Erste Prüfung</th><th>Typische Ursache</th></tr>
+    <tr><td>App bleibt OutOfSync nach Sync</td><td>APP DIFF → welches Feld?</td><td>Mutating Webhook/Operator schreibt Felder; Namespace in Manifest ≠ Destination; Helm-Chart setzt Zufallswerte (Passwörter!) → <code>ignoreDifferences</code></td></tr>
+    <tr><td>„ComparisonError“ / Unknown</td><td>Banner; <code>kubectl -n argocd logs deploy/argocd-repo-server</code></td><td>Repo-Auth, Render-Fehler, Pfad falsch, Submodule</td></tr>
+    <tr><td>Sync hängt in „Running“</td><td>SYNC STATUS → Phase; Hook-Job-Logs</td><td>PreSync-Job wartet ewig; Wave wartet auf Healthy, das nie kommt (Probe falsch)</td></tr>
+    <tr><td>„resource … already exists“ / SharedResourceWarning</td><td>Tracking-Annotation/Label auf der Ressource</td><td>Zwei Apps beanspruchen dasselbe Objekt; falsche Tracking-Methode</td></tr>
+    <tr><td>„metadata.annotations: Too long" beim Anwenden großer CRDs</td><td>Manifest-Größe</td><td>Client-Side-Apply legt das komplette Manifest in <code>last-applied-configuration</code> ab (Limit 256 KB) → <code>--server-side</code> bzw. Sync Option <code>ServerSideApply=true</code></td></tr>
+    <tr><td>Sync schlägt fehl: immutable field</td><td>Fehlermeldung nennt Feld (Selector, Job-Spec)</td><td><code>Replace=true</code> für diese Ressource (Annotation) oder umbenennen</td></tr>
+    <tr><td>Änderung kommt nicht an</td><td>REFRESH; <code>argocd app get --refresh</code></td><td>3-Minuten-Polling, kein Webhook, Cache → Hard Refresh</td></tr>
+    <tr><td>Controller-CPU 100 %, UI träge</td><td><code>kubectl top -n argocd</code>; Metriken <code>argocd_app_reconcile</code></td><td>Zu viele Apps auf einem Controller → Sharding, <code>timeout.reconciliation</code> hoch, Repo-Server skalieren</td></tr>
+  </table>
+  <div class="codebox"><div class="lbl">PowerShell · die wichtigsten Betriebsbefehle<button class="cp">Kopieren</button></div><pre><code class="language-powershell">argocd app get shop-prod --show-operation           # letzte Operation inkl. Fehler
+argocd app diff shop-prod --local apps/shop/overlays/prod   # lokaler Stand vs. Cluster (vor dem Push!)
+argocd app manifests shop-prod --source git         # gerenderte Manifeste ansehen
+argocd app logs shop-prod --kind Deployment --name kaffee-shop --follow
+argocd app terminate-op shop-prod                   # hängenden Sync abbrechen
+argocd app resources shop-prod                      # Ressourcen-Liste mit Status
+argocd admin export -n argocd > argocd-backup.yaml  # alles Sichern (Apps, Projekte, Repos, Settings)
+argocd admin settings resource-overrides health argocd-cm.yaml   # Health-Lua testen</code></pre></div>
+
+  <h3>Monitoring mit Prometheus &amp; Grafana</h3>
+  <p>Alle Argo CD-Komponenten exportieren Prometheus-Metriken – über eigene Services: <code>argocd-metrics</code> (Controller, :8082), <code>argocd-server-metrics</code> (:8083), <code>argocd-repo-server</code> (:8084), <code>argocd-applicationset-controller</code> (:8080), <code>argocd-notifications-controller-metrics</code> (:9001). Das Manifest-Install bringt keine ServiceMonitors mit; die legen wir an – natürlich per Argo CD.</p>
+  <div class="codebox"><div class="tabs"><button class="on" data-t="stack">Application: kube-prometheus-stack</button><button data-t="sm">ServiceMonitors für Argo CD</button><button data-t="rule">PrometheusRule: Alarm bei Drift</button></div>
+    <div class="tabpane on" data-p="stack"><pre><code class="language-yaml">apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata: { name: monitoring, namespace: argocd }
+spec:
+  project: default
+  source:
+    repoURL: https://prometheus-community.github.io/helm-charts
+    chart: kube-prometheus-stack
+    targetRevision: 65.*                      # Trainer: aktuelle Version pruefen
+    helm:
+      valuesObject:
+        grafana:
+          adminPassword: Schulung2026!         # nur Schulung! -> Modul 12
+          service: { type: NodePort, nodePort: 30085 }   # kind: kein Mapping -> port-forward
+        prometheus:
+          prometheusSpec:
+            serviceMonitorSelectorNilUsesHelmValues: false   # ALLE ServiceMonitors im Cluster einsammeln
+            retention: 2d
+            resources: { requests: { memory: 400Mi } }
+        alertmanager: { enabled: false }       # Schulung: schlank halten
+  destination: { server: https://kubernetes.default.svc, namespace: monitoring }
+  syncPolicy:
+    automated: { prune: true, selfHeal: true }
+    syncOptions: [ CreateNamespace=true, ServerSideApply=true ]   # CRDs > 256 KB (Modul 3!)</code></pre></div>
+    <div class="tabpane" data-p="sm"><pre><code class="language-yaml">apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata: { name: argocd-application-controller, namespace: argocd }
+spec:
+  selector: { matchLabels: { app.kubernetes.io/name: argocd-metrics } }
+  endpoints: [ { port: metrics } ]
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata: { name: argocd-server, namespace: argocd }
+spec:
+  selector: { matchLabels: { app.kubernetes.io/name: argocd-server-metrics } }
+  endpoints: [ { port: metrics } ]
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata: { name: argocd-repo-server, namespace: argocd }
+spec:
+  selector: { matchLabels: { app.kubernetes.io/name: argocd-repo-server } }
+  endpoints: [ { port: metrics } ]
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata: { name: argocd-applicationset-controller, namespace: argocd }
+spec:
+  selector: { matchLabels: { app.kubernetes.io/name: argocd-applicationset-controller } }
+  endpoints: [ { port: metrics } ]</code></pre></div>
+    <div class="tabpane" data-p="rule"><pre><code class="language-yaml">apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata: { name: argocd-alerts, namespace: argocd }
+spec:
+  groups:
+    - name: argocd
+      rules:
+        - alert: ArgoAppOutOfSync
+          expr: argocd_app_info{sync_status="OutOfSync"} == 1
+          for: 15m                      # kurzer Drift ist normal (Auto-Sync laeuft)
+          labels: { severity: warning }
+          annotations: { summary: "{{ $labels.name }} ist seit 15 min OutOfSync" }
+        - alert: ArgoAppDegraded
+          expr: argocd_app_info{health_status="Degraded"} == 1
+          for: 5m
+          labels: { severity: critical }
+        - alert: ArgoSyncFailed
+          expr: increase(argocd_app_sync_total{phase=~"Error|Failed"}[10m]) > 0
+          labels: { severity: warning }
+        - alert: ArgoReconcileSlow
+          expr: histogram_quantile(0.95, sum(rate(argocd_app_reconcile_bucket[5m])) by (le)) > 30
+          for: 10m
+          labels: { severity: warning }
+          annotations: { summary: "p95 Reconcile > 30 s - Controller ueberlastet?" }</code></pre></div>
+  </div>
+  <div class="path"><span class="ui">Grafana</span><em>›</em><span>Dashboards</span><em>›</em><span class="ui">New › Import</span><em>›</em><span>ID <b>14584</b> (Argo CD, offiziell)</span><em>›</em><span>Datasource Prometheus</span><em>›</em><span class="ui">Import</span></div>
+  <div class="codebox"><div class="lbl">PowerShell · Grafana erreichen (kein kind-Mapping für 30085)<button class="cp">Kopieren</button></div><pre><code class="language-powershell">kubectl -n monitoring port-forward svc/monitoring-grafana 3000:80     # http://localhost:3000, admin / Schulung2026!
+kubectl -n monitoring port-forward svc/monitoring-kube-prometheus-prometheus 9090:9090   # PromQL direkt</code></pre></div>
+  <table>
+    <tr><th>Metrik</th><th>Frage, die sie beantwortet</th></tr>
+    <tr><td><code>argocd_app_info{sync_status, health_status, project}</code></td><td>Wie viele Apps sind OutOfSync/Degraded – je Projekt? (Gauge, 1 pro App)</td></tr>
+    <tr><td><code>argocd_app_sync_total{phase}</code></td><td>Sync-Rate und Fehlerquote</td></tr>
+    <tr><td><code>argocd_app_reconcile_bucket</code></td><td>Reconcile-Dauer (Histogramm) – der Frühindikator für Controller-Überlast</td></tr>
+    <tr><td><code>argocd_app_k8s_request_total</code></td><td>API-Server-Last durch Argo CD, je Cluster und Verb</td></tr>
+    <tr><td><code>argocd_git_request_total{request_type}</code> / <code>argocd_git_request_duration_seconds</code></td><td>Git-Fetches und ls-remotes – zeigt Polling-Last und langsame Repos</td></tr>
+    <tr><td><code>argocd_redis_request_total{failed}</code></td><td>Cache-Probleme</td></tr>
+    <tr><td><code>argocd_cluster_api_resources</code>, <code>argocd_cluster_cache_age_seconds</code></td><td>Cluster-Cache-Größe und -Frische je Zielcluster</td></tr>
+  </table>
+  <div class="term"><span class="t">Metrik vs. Notification</span><span class="d">Notifications (oben) sind Ereignisse: „Sync fehlgeschlagen, jetzt". Metriken sind Zustände über Zeit: „seit 15 min OutOfSync", „p95 Reconcile steigt seit Dienstag".</span><span class="r">Beides braucht man: Notifications für den Entwickler, dessen Deployment gerade scheitert; Prometheus-Alerts für den Betrieb, der Trends und Dauerzustände sehen muss.</span></div>
+
+  <h3>Performance-Optimierung</h3>
+  <p>Ab ~200 Apps oder mehreren Clustern zeigen die Metriken oben typische Muster. Die Stellschrauben, alle in <code>argocd-cmd-params-cm</code> bzw. Replicas:</p>
+  <table>
+    <tr><th>Symptom (Metrik)</th><th>Stellschraube</th><th>Wo</th></tr>
+    <tr><td>Reconcile-p95 steigt, Controller-CPU am Limit</td><td>Controller-Sharding: Replicas hochsetzen, Cluster werden auf Shards verteilt</td><td>StatefulSet <code>replicas</code> + <code>ARGOCD_CONTROLLER_REPLICAS</code>; Algorithmus <code>controller.sharding.algorithm: round-robin | consistent-hashing</code></td></tr>
+    <tr><td>Apps hängen in „Refreshing"</td><td>Mehr Worker: <code>controller.status.processors</code> (Default 20), <code>controller.operation.processors</code> (10)</td><td><code>argocd-cmd-params-cm</code></td></tr>
+    <tr><td>Git-Requests hoch, Repo-Server-CPU hoch</td><td>Repo-Server skalieren (stateless, Replicas 2–5); <code>reposerver.parallelism.limit</code>; Polling-Intervall <code>timeout.reconciliation</code> auf 300–600 s + Webhooks</td><td>Deployment + <code>argocd-cm</code></td></tr>
+    <tr><td>Mono-Repo: jeder Commit rendert alle Apps neu</td><td>Annotation <code>argocd.argoproj.io/manifest-generate-paths: .</code> auf der Application – Refresh nur bei Änderungen im eigenen Pfad</td><td>Application-YAML</td></tr>
+    <tr><td>API-Server des Zielclusters unter Last</td><td><code>controller.k8s.client.qps</code> / <code>burst</code>; <code>ApplyOutOfSyncOnly=true</code>; Ressourcen ausschließen (<code>resource.exclusions</code>: Events, Leases, EndpointSlices)</td><td><code>argocd-cmd-params-cm</code>, <code>argocd-cm</code></td></tr>
+    <tr><td>Redis-Fehler, Diffs „springen"</td><td>Redis-HA (ha/install.yaml), Redis-Ressourcen; <code>redis.compression</code></td><td>Install-Variante</td></tr>
+    <tr><td>Argo CD-UI langsam bei riesigen Apps</td><td>Apps kleiner schneiden (App of Apps), <code>server.repo.server.timeout.seconds</code></td><td>Architektur</td></tr>
+  </table>
+  <div class="co tip"><b>Reihenfolge beim Tuning</b>Erst messen (Grafana 14584 zeigt Reconcile-Dauer und Queue-Tiefe), dann Polling-Intervall hoch + Webhook, dann Repo-Server skalieren, dann erst Controller-Sharding. Sharding ohne echte Multi-Cluster-Last bringt nichts – ein Cluster landet immer auf einem Shard.</div>
+  <h3>Ausblick: das Argo-Ökosystem</h3>
+  <p>Werkzeuge rund um Argo CD, die Sie kennen sollten: <b>Argo CD Image Updater</b> (Modul 10), <b>Argo Rollouts</b> (Canary/Blue-Green statt RollingUpdate, mit eigenem UI-Plugin und metrik-basiertem Abbruch), <b>Argo Workflows</b> (CI-artige DAGs im Cluster), <b>Kargo</b> (Promotion dev → staging → prod als eigenes Produkt der Argo CD-Maintainer).</p>
+
+  <div class="ex"><div class="exh">Nachtschicht <span class="pill" style="border-color:var(--bloom-3);color:#6EE7B7">L3</span> <span class="pill" style="border-color:var(--bloom-4);color:var(--accent-soft)">L4</span> <span class="pill" style="border-color:var(--bloom-5);color:#FCA5A5">L5</span></div>
+    <ol>
+      <li>Setzen Sie im prod-Overlay das Image auf <code>nginx:99.99</code>, pushen und syncen Sie. Lesen Sie Sync- und Health-Status in der Matrix. Welche Zelle?</li>
+      <li>Beheben Sie es <em>zweimal</em>: erst per UI-Rollback (beobachten Sie den Auto-Sync-Schalter), dann per <code>git revert</code>. Vergleichen Sie <code>argocd app history</code> und <code>git log</code>.</li>
+      <li>Richten Sie den Telegram-Webhook (Trainer stellt Bot-Token bereit) oder alternativ <code>service.webhook</code> auf <code>https://webhook.site</code> ein und lösen Sie eine Failed-Notification aus.</li>
+      <li><em>Bewerten:</em> Die Geschäftsführung will „einen Knopf, der prod auf gestern zurücksetzt“. Was empfehlen Sie und warum?</li>
+    </ol>
+    <details><summary>Lösungshinweis</summary><div>1: Synced + Degraded (ImagePullBackOff): Git ist kaputt. 2: Nach UI-Rollback zeigt APP DETAILS „Sync Policy: None“ und die App ist OutOfSync gegenüber HEAD; nach dem Revert ist alles konsistent und history hat einen weiteren Eintrag. 4: Kein Knopf im Cluster – ein <code>git revert</code> per PR mit Auto-Merge-Regel für Notfälle, plus Argo Rollouts für automatischen Abbruch anhand von Metriken, wenn „gestern“ eigentlich „bevor es kaputt war“ meint.</div></details>
+  </div>
+</div></section>
+
+<!-- ===================== M15 ===================== -->
+<section class="module" id="m15"><div class="wrap reveal">
+  <div class="mhead"><span class="mnum">Modul 15</span><h2>Abschluss &amp; Capstone</h2><span class="mtime">90 min</span></div>
+  <div class="bloom"><i class="b1">L1</i><i class="b2">L2</i><i class="b3">L3</i><i class="b4">L4</i><i class="b5">L5</i><i class="b6">L6</i></div>
+  <p class="lead">Mareikes Vorfall ist zwei Tage her. Schauen wir, was sich geändert hat – und dann bauen Sie es allein.</p>
+
+  <h3>Der rote Faden, rückwärts gelesen</h3>
+  <ul class="tl">
+    <li><b>Modul 1</b> <code>kubectl scale --replicas=0</code> war unsichtbar → heute ist es Drift, den Self-Heal in Sekunden rückgängig macht (M5).</li>
+    <li><b>Modul 4</b> Eine Application verbindet Repo-Pfad mit Namespace → heute erzeugt ein ApplicationSet das ganze Portfolio (M9).</li>
+    <li><b>Modul 3</b> Admin darf alles → heute darf Mareike dev syncen und prod sehen (M8), und Freitagabend synct niemand.</li>
+    <li><b>Modul 7</b> dev und prod aus einer Basis → heute mit Migration davor, Smoketest danach (M11) und Secret aus dem Vault (M12).</li>
+    <li><b>Modul 10 &amp; 13</b> Die Pipeline endet mit einem Commit statt mit kubectl; der Morgen-Report kommt aus einem Skript.</li>
+    <li><b>Modul 14</b> Um 3 Uhr nachts liest jemand die Matrix, revertet in Git und geht wieder schlafen – und Grafana zeigt am Morgen, wann es anfing.</li>
+  </ul>
+
+  <h3>Bloom-Coverage-Matrix</h3>
+  <div class="cov">
+    <div class="h"></div><div class="h" style="color:var(--bloom-1)">L1</div><div class="h" style="color:var(--bloom-2)">L2</div><div class="h" style="color:var(--bloom-3)">L3</div><div class="h" style="color:var(--bloom-4)">L4</div><div class="h" style="color:var(--bloom-5)">L5</div><div class="h" style="color:var(--bloom-6)">L6</div>
+    <div class="m">00 Orientierung</div><div class="on" style="background:var(--bloom-1)">●</div><div class="on" style="background:var(--bloom-2)">●</div><div></div><div></div><div></div><div></div>
+    <div class="m">01 Warum GitOps</div><div class="on" style="background:var(--bloom-1)">●</div><div class="on" style="background:var(--bloom-2)">●</div><div class="on" style="background:var(--bloom-3)">●</div><div class="on" style="background:var(--bloom-4)">●</div><div></div><div></div>
+    <div class="m">02 Architektur</div><div class="on" style="background:var(--bloom-1)">●</div><div class="on" style="background:var(--bloom-2)">●</div><div></div><div class="on" style="background:var(--bloom-4)">●</div><div></div><div></div>
+    <div class="m">03 Installation &amp; UI</div><div class="on" style="background:var(--bloom-1)">●</div><div class="on" style="background:var(--bloom-2)">●</div><div class="on" style="background:var(--bloom-3)">●</div><div></div><div class="on" style="background:var(--bloom-5)">●</div><div></div>
+    <div class="m">04 Erste Application</div><div class="on" style="background:var(--bloom-1)">●</div><div class="on" style="background:var(--bloom-2)">●</div><div class="on" style="background:var(--bloom-3)">●</div><div class="on" style="background:var(--bloom-4)">●</div><div></div><div></div>
+    <div class="m">05 Sync &amp; Drift</div><div class="on" style="background:var(--bloom-1)">●</div><div class="on" style="background:var(--bloom-2)">●</div><div class="on" style="background:var(--bloom-3)">●</div><div class="on" style="background:var(--bloom-4)">●</div><div class="on" style="background:var(--bloom-5)">●</div><div></div>
+    <div class="m">06 Repos &amp; Cluster</div><div class="on" style="background:var(--bloom-1)">●</div><div class="on" style="background:var(--bloom-2)">●</div><div class="on" style="background:var(--bloom-3)">●</div><div class="on" style="background:var(--bloom-4)">●</div><div></div><div></div>
+    <div class="m">07 Kustomize &amp; Helm</div><div class="on" style="background:var(--bloom-1)">●</div><div class="on" style="background:var(--bloom-2)">●</div><div class="on" style="background:var(--bloom-3)">●</div><div class="on" style="background:var(--bloom-4)">●</div><div class="on" style="background:var(--bloom-5)">●</div><div></div>
+    <div class="m">08 Projects &amp; RBAC</div><div class="on" style="background:var(--bloom-1)">●</div><div class="on" style="background:var(--bloom-2)">●</div><div class="on" style="background:var(--bloom-3)">●</div><div class="on" style="background:var(--bloom-4)">●</div><div class="on" style="background:var(--bloom-5)">●</div><div></div>
+    <div class="m">09 AppSets</div><div class="on" style="background:var(--bloom-1)">●</div><div class="on" style="background:var(--bloom-2)">●</div><div class="on" style="background:var(--bloom-3)">●</div><div class="on" style="background:var(--bloom-4)">●</div><div></div><div class="on" style="background:var(--bloom-6)">●</div>
+    <div class="m">10 CI/CD</div><div class="on" style="background:var(--bloom-1)">●</div><div class="on" style="background:var(--bloom-2)">●</div><div class="on" style="background:var(--bloom-3)">●</div><div class="on" style="background:var(--bloom-4)">●</div><div class="on" style="background:var(--bloom-5)">●</div><div></div>
+    <div class="m">11 Waves &amp; Hooks</div><div class="on" style="background:var(--bloom-1)">●</div><div class="on" style="background:var(--bloom-2)">●</div><div class="on" style="background:var(--bloom-3)">●</div><div class="on" style="background:var(--bloom-4)">●</div><div class="on" style="background:var(--bloom-5)">●</div><div></div>
+    <div class="m">12 Secrets</div><div class="on" style="background:var(--bloom-1)">●</div><div class="on" style="background:var(--bloom-2)">●</div><div class="on" style="background:var(--bloom-3)">●</div><div class="on" style="background:var(--bloom-4)">●</div><div class="on" style="background:var(--bloom-5)">●</div><div></div>
+    <div class="m">13 Scripting &amp; API</div><div class="on" style="background:var(--bloom-1)">●</div><div class="on" style="background:var(--bloom-2)">●</div><div class="on" style="background:var(--bloom-3)">●</div><div class="on" style="background:var(--bloom-4)">●</div><div></div><div class="on" style="background:var(--bloom-6)">●</div>
+    <div class="m">14 Betrieb</div><div class="on" style="background:var(--bloom-1)">●</div><div class="on" style="background:var(--bloom-2)">●</div><div class="on" style="background:var(--bloom-3)">●</div><div class="on" style="background:var(--bloom-4)">●</div><div class="on" style="background:var(--bloom-5)">●</div><div></div>
+    <div class="m">15 Capstone</div><div class="on" style="background:var(--bloom-1)">●</div><div class="on" style="background:var(--bloom-2)">●</div><div class="on" style="background:var(--bloom-3)">●</div><div class="on" style="background:var(--bloom-4)">●</div><div class="on" style="background:var(--bloom-5)">●</div><div class="on" style="background:var(--bloom-6)">●</div>
+  </div>
+
+  <h3>Sie können jetzt …</h3>
+  <div class="comp">
+    <div class="card" style="border-color:var(--bloom-1)"><h4>Erinnern</h4><ul><li>die 7 Komponenten und ihre Aufgabe nennen</li><li>Sync-/Health-Status-Werte und Sync-Phasen aufzählen</li><li>die drei zentralen ConfigMaps zuordnen</li></ul></div>
+    <div class="card" style="border-color:var(--bloom-2)"><h4>Verstehen</h4><ul><li>Pull- gegen Push-Modell erklären</li><li>Auto-Sync, Self-Heal, Prune unterscheiden</li><li>App of Apps gegen ApplicationSet abgrenzen</li></ul></div>
+    <div class="card" style="border-color:var(--bloom-3)"><h4>Anwenden</h4><ul><li>Argo CD installieren und absichern</li><li>Applications per UI, CLI und YAML anlegen</li><li>Hooks, Waves, Projekte, RBAC, Sealed Secrets einsetzen</li><li>eine CI-Pipeline GitOps-konform anbinden; Argo CD per CLI, API und PowerShell automatisieren</li></ul></div>
+    <div class="card" style="border-color:var(--bloom-4)"><h4>Analysieren</h4><ul><li>OutOfSync-Ursachen mit Diff und Logs finden</li><li>Drift-Flapping mit HPA diagnostizieren</li><li>Render-Fehler auf die Komponente zurückführen</li></ul></div>
+    <div class="card" style="border-color:var(--bloom-5)"><h4>Bewerten</h4><ul><li>Auto-Sync für prod begründet entscheiden</li><li>Kustomize vs. Helm vs. Plugin abwägen; Argo CD gegen Flux/Jenkins X/Spinnaker einordnen</li><li>Secret-Strategie und Rollback-Prozess empfehlen</li></ul></div>
+    <div class="card" style="border-color:var(--bloom-6)"><h4>Erschaffen</h4><ul><li>ein Portfolio-ApplicationSet entwerfen</li><li>ein produktionsreifes Bootstrap-Setup aus Git aufbauen</li><li>Drift-Reports und Sync-Wartelogik als Skript entwerfen</li></ul></div>
+  </div>
+
+  <div class="ex"><div class="exh">Capstone: Nordlicht Kaffee, von Null <span class="pill" style="border-color:var(--bloom-6);color:#F9A8D4">L6 Erschaffen</span></div>
+    <p>Löschen Sie Ihren Cluster (<code>kind delete cluster --name schulung</code>) und bauen Sie alles <em>ausschließlich aus Git</em> wieder auf. Ziel in 90 Minuten:</p>
+    <ol>
+      <li>Cluster + Argo CD (Skripte 02/03 dürfen Sie nutzen).</li>
+      <li>Ein einziges <code>kubectl apply</code> auf eine Root-Application oder ein ApplicationSet – danach nichts mehr per Hand.</li>
+      <li>Daraus entstehen: Projekt <code>nordlicht</code>, <code>shop-dev</code> (Auto-Sync + Self-Heal + Prune), <code>shop-prod</code> (manuell, Sync-Window Freitagabend), Sealed-Secrets-Controller, ein versiegeltes Secret im Shop, PreSync-Migration und PostSync-Smoketest.</li>
+      <li>Account <code>mareike</code> darf dev syncen, prod nur sehen.</li>
+      <li>Nachweis: <code>argocd app list</code> zeigt alles Synced/Healthy; <code>kubectl -n shop-dev scale deploy kaffee-shop --replicas=0</code> wird innerhalb von 10 s korrigiert.</li>
+    </ol>
+    <details><summary>Bewertungsraster für den Trainer</summary><div>Pflicht (bestanden): Punkte 2, 3 (ohne Sync-Window), 5. Fortgeschritten: Sync-Window, RBAC, Sealed Secrets funktionieren. Exzellent: Root-App verwaltet auch Projekt + Repo-Secret + <code>argocd-cm</code>-Anpassungen (Argo CD verwaltet sich selbst), Kind-Apps ohne Finalizer mit begründeter Entscheidung, Notification bei Failed. Typische Fehler: Reihenfolge Projekt vor Apps (→ Sync-Wave auf dem AppProject), Sealed-Secrets-CRD vor SealedSecret (→ Wave oder <code>SkipDryRunOnMissingResource</code>), Repo-Secret im Klartext (→ Diskussion Bootstrap-Secret).</div></details>
+  </div>
+
+  <div class="co tip"><b>Weiterführend</b>Offizielle Doku argo-cd.readthedocs.io (Operator Manual, User Guide), Argo CD Best Practices-Seite, „Argo CD in Practice“ (Packt), CNCF-Slack #argo-cd. Für Promotion-Workflows: Kargo. Für Rollout-Strategien: Argo Rollouts. Nächste Schulungen bei Coach-Raffael: Kubernetes für Entwickler, DevSecOps/SDL, Helm Advanced.</div>
+</div></section>
+</main>
+<footer>Coach-Raffael · PRIMIQ Solutions Ltd · Argo CD Schulung · 2026</footer>
+
+<script>
+// ---------- Highlight & Copy ----------
+hljs.highlightAll();
+document.querySelectorAll('.cp').forEach(b=>b.addEventListener('click',()=>{
+  const code=b.closest('.codebox').querySelector('.tabpane.on code, pre code');
+  navigator.clipboard.writeText(code.innerText).then(()=>{b.textContent='Kopiert ✓';setTimeout(()=>b.textContent='Kopieren',1400)});
+}));
+// ---------- Tabs ----------
+document.querySelectorAll('.tabs').forEach(t=>{
+  t.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{
+    const box=t.closest('.codebox');
+    t.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));
+    box.querySelectorAll('.tabpane').forEach(p=>p.classList.toggle('on',p.dataset.p===b.dataset.t));
+  }));
+});
+// ---------- Mermaid ----------
+mermaid.initialize({startOnLoad:true,theme:'dark',themeVariables:{primaryColor:'#1C2128',primaryTextColor:'#ECEFF4',primaryBorderColor:'#2A313B',lineColor:'#9AA5B1',secondaryColor:'#262C35',tertiaryColor:'#14171C',fontFamily:'Inter',fontSize:'14px'},flowchart:{curve:'basis',htmlLabels:true}});
+// ---------- Progress, Reveal, Spy ----------
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const prog=document.getElementById('progress');
+const spy=document.getElementById('spy');
+const links=[...document.querySelectorAll('#sidebar nav a')];
+const secs=links.map(a=>document.querySelector(a.getAttribute('href')));
+function onScroll(){
+  const h=document.documentElement;const p=h.scrollTop/(h.scrollHeight-h.clientHeight);
+  prog.style.transform='scaleX('+p+')';
+  let cur=0;secs.forEach((s,i)=>{if(s&&s.getBoundingClientRect().top<160)cur=i});
+  links.forEach((a,i)=>a.classList.toggle('active',i===cur));
+  const a=links[cur];spy.style.top=a.offsetTop+'px';spy.style.height=a.offsetHeight+'px';
+}
+addEventListener('scroll',onScroll,{passive:true});onScroll();
+if(!reduce){const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.05});document.querySelectorAll('.reveal').forEach(el=>io.observe(el));}
+else document.querySelectorAll('.reveal').forEach(el=>el.classList.add('in'));
+// mobile drawer
+const sb=document.getElementById('sidebar');document.getElementById('menu-btn').onclick=()=>sb.classList.toggle('open');
+links.forEach(a=>a.addEventListener('click',()=>sb.classList.remove('open')));
+
+// ---------- Reconciliation Simulator ----------
+(function(){
+  const S={git:{replicas:1,image:'nginx:1.27',service:true},live:{replicas:1,image:'nginx:1.27',service:true,dead:0},auto:false,heal:false,prune:false,busy:false};
+  const $=id=>document.getElementById(id);
+  const log=(m,c='')=>{const d=document.createElement('div');d.className=c;d.textContent=new Date().toLocaleTimeString('de-DE')+'  '+m;$('r-log').prepend(d)};
+  function diff(){const d=[];if(S.git.replicas!==S.live.replicas)d.push('replicas');if(S.git.image!==S.live.image)d.push('image');if(S.git.service!==S.live.service)d.push('service');return d}
+  function render(){
+    const d=diff();
+    $('r-git').innerHTML=`replicas: ${S.git.replicas}<br>image: ${S.git.image}<br>Service: ${S.git.service?'kaffee-shop':'<s>gelöscht</s>'}`;
+    $('r-live').innerHTML=`replicas: <span class="${d.includes('replicas')?'diff':''}">${S.live.replicas}</span><br>image: <span class="${d.includes('image')?'diff':''}">${S.live.image}</span><br>Service: <span class="${d.includes('service')?'diff':''}">${S.live.service?'kaffee-shop':'fehlt'}</span>${!S.git.service&&S.live.service?' <span class="diff">(requires pruning)</span>':''}`;
+    const pods=$('r-pods');pods.innerHTML='';for(let i=0;i<S.live.replicas;i++){const p=document.createElement('div');p.className='pod'+(i<S.live.dead?' dead':'')+(S.live.image!==S.git.image&&S.git.image!=='nginx:1.27'&&false?' old':'');pods.appendChild(p)}
+    const sync=$('r-sync');if(d.length){sync.className='pill bad';sync.textContent='OutOfSync'}else{sync.className='pill ok';sync.textContent='Synced'}
+    const h=$('r-health');if(S.live.dead>0){h.className='pill err';h.textContent='Degraded'}else if(S.live.replicas===0){h.className='pill na';h.textContent='Missing'}else{h.className='pill ok';h.textContent='Healthy'}
+  }
+  function doSync(reason){
+    if(S.busy)return;S.busy=true;$('r-arrow').classList.add('flow');$('r-msg').textContent='synct…';log('Sync gestartet ('+reason+')','a');
+    setTimeout(()=>{
+      S.live.replicas=S.git.replicas;S.live.image=S.git.image;S.live.dead=0;
+      if(!S.git.service&&S.live.service){if(S.prune){S.live.service=false;log('Prune: Service gelöscht','w')}else log('Service bleibt – Prune ist aus (OutOfSync: requires pruning)','w')}
+      if(S.git.service)S.live.service=true;
+      $('r-arrow').classList.remove('flow');$('r-msg').textContent='beobachtet';S.busy=false;
+      log(diff().length?'Sync fertig, aber weiterhin OutOfSync':'Sync fertig → Synced / Healthy','g');render();
+    },1500);
+  }
+  let lastGit=JSON.stringify(S.git);
+  setInterval(()=>{ // reconcile loop
+    const d=diff();const gitChanged=JSON.stringify(S.git)!==lastGit;lastGit=JSON.stringify(S.git);
+    if(!d.length||S.busy)return;
+    if(S.auto&&gitChanged){doSync('Auto-Sync: neue Revision in Git');return}
+    if(S.auto&&S.heal){doSync('Self-Heal: Drift im Cluster erkannt');return}
+    if(!S.auto)log('Reconcile: OutOfSync ('+d.join(', ')+') – Sync Policy Manual, warte auf Klick');
+    else log('Reconcile: OutOfSync ('+d.join(', ')+') – Self-Heal aus, Auto-Sync reagiert nur auf Git-Änderungen','w');
+  },3000);
+  document.querySelectorAll('#rec [data-a]').forEach(b=>b.addEventListener('click',()=>{
+    const a=b.dataset.a;
+    if(a==='commit-rep'){S.git.replicas=3;log('git push: replicas 1 → 3','a')}
+    if(a==='commit-img'){S.git.image='nginx:1.28';log('git push: image → nginx:1.28','a')}
+    if(a==='commit-rm'){S.git.service=false;log('git push: service.yaml entfernt','a')}
+    if(a==='k-scale0'){S.live.replicas=0;S.live.dead=0;log('kubectl scale --replicas=0  (Drift!)','e')}
+    if(a==='k-crash'){if(S.live.replicas>0){S.live.dead=1;log('Pod CrashLoopBackOff – Health: Degraded (kein Drift! Git = Cluster)','e')}}
+    if(a==='sync')doSync('manuell');
+    if(a==='refresh')log('Refresh: Git neu gelesen, Diff neu berechnet – Cluster unverändert');
+    if(a==='reset'){S.git={replicas:1,image:'nginx:1.27',service:true};S.live={replicas:1,image:'nginx:1.27',service:true,dead:0};lastGit=JSON.stringify(S.git);$('r-log').innerHTML='';log('Zurückgesetzt')}
+    render();
+  }));
+  $('r-auto').onchange=e=>{S.auto=e.target.checked;log('Auto-Sync '+(S.auto?'AN':'AUS'),'a')};
+  $('r-heal').onchange=e=>{S.heal=e.target.checked;log('Self-Heal '+(S.heal?'AN':'AUS'),'a')};
+  $('r-prune').onchange=e=>{S.prune=e.target.checked;log('Prune '+(S.prune?'AN':'AUS'),'a')};
+  render();log('Application shop-dev angelegt. Sync Policy: Manual.');
+})();
+
+// ---------- Wave stepper ----------
+(function(){
+  const lanes=[...document.querySelectorAll('.sim .lane')];const st=document.getElementById('w-status');let timer=[];
+  function reset(){timer.forEach(clearTimeout);timer=[];lanes.forEach(l=>l.className='lane');st.className='pill na';st.textContent='bereit'}
+  function run(fail){
+    reset();st.className='pill run';st.textContent='Running';
+    const order=fail?['pre']:['pre','w-1','w0','w1','post','prune'];let t=0;
+    const get=k=>lanes.find(l=>l.dataset.k===k);
+    order.forEach((k,i)=>{
+      timer.push(setTimeout(()=>{get(k).classList.add('active')},t));t+=900;
+      timer.push(setTimeout(()=>{get(k).classList.remove('active');get(k).classList.add(fail&&k==='pre'?'fail':'done')},t));t+=300;
+    });
+    if(fail){timer.push(setTimeout(()=>{['w-1','w0','w1','post','prune'].forEach(k=>get(k).classList.add('skip'));get('fail').classList.add('active')},t));t+=900;
+      timer.push(setTimeout(()=>{get('fail').classList.remove('active');get('fail').classList.add('done');st.className='pill err';st.textContent='Failed (PreSync)'},t))}
+    else timer.push(setTimeout(()=>{get('fail').classList.add('skip');st.className='pill ok';st.textContent='Succeeded'},t));
+  }
+  document.getElementById('w-run').onclick=()=>run(false);
+  document.getElementById('w-fail').onclick=()=>run(true);
+  document.getElementById('w-reset').onclick=reset;
+})();
+
+// ---------- ApplicationSet playground ----------
+(function(){
+  const inp=document.getElementById('as-in'),svc=document.getElementById('as-svc'),out=document.getElementById('as-out'),cnt=document.getElementById('as-count');
+  function render(){
+    const envs=inp.value.split('\n').map(l=>l.trim()).filter(Boolean).map(l=>{const [env,cluster,auto]=l.split(',').map(x=>(x||'').trim());return {env,cluster:cluster||'in-cluster',auto:auto==='true'}});
+    const svcs=svc.value.split(',').map(s=>s.trim()).filter(Boolean);
+    out.innerHTML='';let n=0;
+    svcs.forEach(s=>envs.forEach(e=>{n++;const d=document.createElement('div');d.className='appc';
+      d.innerHTML=`<b>Application ${s}-${e.env}</b><br>path: apps/${s}/overlays/${e.env}<br>destination: ${e.cluster} / ns ${s}-${e.env}<br>syncPolicy: ${e.auto?'automated (prune, selfHeal)':'manual'}`;out.appendChild(d)}));
+    cnt.textContent=n+' (= '+svcs.length+' Services × '+envs.length+' Umgebungen)';
+  }
+  inp.addEventListener('input',render);svc.addEventListener('input',render);render();
+})();
+
+// ---------- CI/CD flow ----------
+(function(){
+  const lanes=[...document.querySelectorAll('#cicd .lane')];let timer=[];
+  const get=k=>lanes.find(l=>l.dataset.k===k);
+  const mode=()=>document.querySelector('input[name="ci-mode"]:checked').value;
+  function reset(){timer.forEach(clearTimeout);timer=[];lanes.forEach(l=>l.className='lane');apply()}
+  function apply(){const push=mode()==='push';get('trig').classList.toggle('skip',!push);
+    document.getElementById('ci-detect').textContent=push?'Sync-Request von CI → Refresh → OutOfSync':'Webhook/Polling → Refresh → OutOfSync';
+    document.getElementById('ci-note').textContent=push?'Im Push-Modus braucht die CI ein Argo CD-Token (Projektrolle) und wartet mit argocd app wait auf Healthy – die Pipeline kennt das Ergebnis.':'Im Pull-Modus braucht die CI kein Argo CD-Token und keinen Cluster-Zugang. Sie ist fertig, sobald der Commit drin ist.';}
+  function run(){reset();const push=mode()==='push';let t=0;
+    const order=push?['build','push','bump','trig','detect','sync','ok']:['build','push','bump','detect','sync','ok'];
+    order.forEach(k=>{timer.push(setTimeout(()=>get(k).classList.add('active'),t));t+=850;timer.push(setTimeout(()=>{get(k).classList.remove('active');get(k).classList.add('done')},t));t+=250});}
+  document.getElementById('ci-run').onclick=run;document.getElementById('ci-reset').onclick=reset;
+  document.querySelectorAll('input[name="ci-mode"]').forEach(r=>r.onchange=reset);apply();
+})();
+// ---------- JSON explorer ----------
+(function(){
+  const sample={metadata:{name:'shop-dev',namespace:'argocd',labels:{env:'dev'}},
+    spec:{project:'nordlicht',source:{repoURL:'https://github.com/nordlicht/kaffee-shop-gitops.git',path:'apps/shop/overlays/dev',targetRevision:'main'},destination:{server:'https://kubernetes.default.svc',namespace:'shop-dev'},syncPolicy:{automated:{prune:true,selfHeal:true}}},
+    status:{sync:{status:'OutOfSync',revision:'9f3c1a2d7b...',comparedTo:{}},health:{status:'Healthy'},
+      operationState:{phase:'Succeeded',startedAt:'2026-09-03T06:58:10Z',finishedAt:'2026-09-03T06:58:14Z',message:'successfully synced (all tasks run)'},
+      history:[{id:3,revision:'9f3c1a2d7b...',deployedAt:'2026-09-03T06:58:14Z'}],
+      conditions:[{type:'OrphanedResourceWarning',message:'Application has 1 orphaned resources'}],
+      resources:[{kind:'Deployment',name:'kaffee-shop',status:'OutOfSync',health:{status:'Healthy'}}],
+      reconciledAt:'2026-09-03T07:01:00Z'}};
+  const tree=document.getElementById('jx-tree'),out=document.getElementById('jx-out');
+  const hints={'status.sync.status':'Synced | OutOfSync | Unknown – Basis jedes Drift-Reports','status.health.status':'Healthy | Progressing | Degraded | Suspended | Missing | Unknown','status.operationState.phase':'Running | Succeeded | Failed | Error – der letzte Sync','status.operationState.finishedAt':'ISO-Zeit: [datetime] daraus, dann Differenz zu Get-Date','status.conditions':'Array – leer ist gut; hier stehen ComparisonError, OrphanedResourceWarning …','status.resources':'Ein Eintrag pro verwalteter Ressource – für "welche Ressource ist OutOfSync?"','status.sync.revision':'Commit-SHA, der live ist – für git log / Autor','status.history':'Deploy-Historie; [-1] ist der letzte Eintrag','spec.source.repoURL':'Quelle – in mass-refresh.ps1 geändert','metadata.name':'App-Name – der Schlüssel für alle weiteren Befehle'};
+  function render(obj,path,depth){let h='';for(const k in obj){const v=obj[k];const p=path?path+'.'+k:k;const pad='&nbsp;'.repeat(depth*2);
+    if(v&&typeof v==='object'&&!Array.isArray(v)){h+=`<div>${pad}<span data-p="${p}" style="color:var(--text-muted);cursor:pointer">${k}:</span></div>`+render(v,p,depth+1)}
+    else if(Array.isArray(v)){h+=`<div>${pad}<span data-p="${p}" style="color:var(--text-muted);cursor:pointer">${k}: [${v.length}]</span></div>`;v.forEach((it,i)=>{if(typeof it==='object')h+=render(it,p+'['+i+']',depth+1)})}
+    else h+=`<div>${pad}<span data-p="${p}" style="cursor:pointer"><span style="color:#93C5FD">${k}</span>: <span style="color:#6EE7B7">${JSON.stringify(v)}</span></span></div>`}return h}
+  tree.innerHTML=render(sample,'',0);
+  tree.querySelectorAll('[data-p]').forEach(el=>el.onclick=()=>{const p=el.dataset.p;const ps='$app.'+p.replace(/\[(\d+)\]/g,'[$1]');
+    let val;try{val=p.split(/\.|\[|\]/).filter(Boolean).reduce((o,k)=>o[k],sample)}catch(e){val=undefined}
+    out.textContent='$app = argocd app get shop-dev -o json | ConvertFrom-Json\n'+ps+'\n# -> '+(typeof val==='object'?JSON.stringify(val).slice(0,90)+'…':JSON.stringify(val));
+    const key=p.replace(/\[\d+\]/g,'');document.getElementById('jx-hint').innerHTML=hints[key]?'<b style="color:var(--accent-soft)">'+key+'</b>: '+hints[key]:'Feld <code>'+key+'</code>';
+    tree.querySelectorAll('[data-p]').forEach(x=>x.style.background='');el.style.background='rgba(212,134,10,.18)'});
+})();
+</script>
+</body>
+</html>
